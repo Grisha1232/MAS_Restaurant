@@ -10,24 +10,36 @@ import org.example.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class VisitorAgent extends Agent {
     String name;
     int orderTotal;
-    ArrayList<AID> order;
+    ArrayList<String> order;
+
+    AID manager;
 
     @Override
     protected void setup() {
         System.out.println("Visitor " + getAID().getName() + " set");
         // TODO: Сделать логику поведения
+        manager = getAID("Manager");
+        System.out.println(manager.getName());
+        order = new ArrayList<>(List.of(new String[]{"something", "stupid", "added", "to", "order"}));
+        addBehaviour(new TickerBehaviour(this, 6000) {
+            @Override
+            protected void onTick() {
+                addBehaviour(new MakeOrder());
+            }
+        });
     }
 
     private class AddDishToOrder extends Behaviour {
 
-        AID toAdd;
+        String toAdd;
 
-        AddDishToOrder(AID dish) {
+        AddDishToOrder(String dish) {
             toAdd = dish;
         }
 
@@ -44,9 +56,9 @@ public class VisitorAgent extends Agent {
 
     private class DeleteDishFromOrder extends Behaviour {
 
-        AID toDelete;
+        String toDelete;
 
-        DeleteDishFromOrder(AID dish) {
+        DeleteDishFromOrder(String dish) {
             toDelete = dish;
         }
         @Override
@@ -64,8 +76,9 @@ public class VisitorAgent extends Agent {
 
         @Override
         public void action() {
+            System.out.println("Making order");
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-            msg.addReceiver(new AID("Manager", AID.ISLOCALNAME));
+            msg.addReceiver(manager);
             msg.setLanguage("English");
             // TODO: Отосолать заказ
             try {
@@ -73,7 +86,17 @@ public class VisitorAgent extends Agent {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            send(msg);
+            try {
+                if (msg.getContentObject() != null) {
+                    System.out.println("message has been set");
+                } else {
+                    System.out.println("message has not been set");
+                }
+            } catch (UnreadableException e) {
+                throw new RuntimeException(e);
+            }
+            myAgent.send(msg);
+            System.out.println("sent message");
             myAgent.addBehaviour(new ReceiveAboutTime());
         }
 
@@ -100,7 +123,7 @@ public class VisitorAgent extends Agent {
         }
     }
 
-    private class ReceiveAboutTime extends Behaviour {
+    private static class ReceiveAboutTime extends Behaviour {
 
         Boolean isReady = false;
         String timeLeft;
@@ -116,6 +139,8 @@ public class VisitorAgent extends Agent {
                 } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }
+            } else {
+                block();
             }
         }
 

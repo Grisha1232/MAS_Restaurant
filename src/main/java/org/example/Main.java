@@ -3,12 +3,13 @@ package org.example;
 
 import jade.core.*;
 import jade.core.Runtime;
-import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
-import org.example.agents.ProductAgent;
+import jade.wrapper.ControllerException;
+import org.example.agents.ManagerAgent;
+import org.example.agents.VisitorAgent;
+
 
 public class Main {
-    public static void main(String[] args) throws StaleProxyException {
+    public static void main(String[] args) throws ControllerException {
         final Runtime rt = Runtime.instance();
         final Profile p = new ProfileImpl();
 
@@ -16,7 +17,9 @@ public class Main {
         p.setParameter(Profile.MAIN_PORT, "8080");
         p.setParameter(Profile.GUI, "true");
         var r = rt.createMainContainer(p);
-        r.createNewAgent("ag", ProductAgent.class.getName(),null ).start();
-
+        Object[] arg = {r};
+        var manager = r.createNewAgent("Manager", ManagerAgent.class.getName(), arg);
+        manager.start();
+        r.createNewAgent("Visitor", VisitorAgent.class.getName(), null).start();
     }
 }

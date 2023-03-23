@@ -15,7 +15,11 @@ public class MealsBeveragesAgent extends Agent {
 
     @Override
     protected void setup() {
-        // TODO: get from arguments what need to cook
+        var args = getArguments();
+        this.mealName = (String) args[0];
+        this.ordDish = (Integer) args[1];
+        this.processorID = (Integer) args[2];
+        this.operations = (Deque<AID>) args[3];
         addBehaviour(new CookMeal());
     }
 

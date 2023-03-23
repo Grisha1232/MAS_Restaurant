@@ -1,23 +1,19 @@
 package org.example.agents;
 
 import jade.core.*;
-import jade.core.Runtime;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.ControllerException;
-import jade.wrapper.StaleProxyException;
 
-import javax.sound.sampled.DataLine;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringJoiner;
 
 public class ManagerAgent extends Agent {
 
     private jade.wrapper.AgentContainer mainContainer;
-    private ArrayList<AID> response;
+//    private ArrayList<String> response;
     Integer countOfOrders = 0;
 
     // TODO: Как я понял, у нас один manager, он создает много заказов и контейнер со всеми агентами мы хроним в managere.
@@ -32,48 +28,50 @@ public class ManagerAgent extends Agent {
             }
         });
         // TODO: как понять когда удалять?
-        addBehaviour(new OneShotBehaviour() {
-            @Override
-            public void action() {
-                myAgent.addBehaviour(new DeleteOrder());
-            }
-        });
-        addBehaviour(new OneShotBehaviour() {
-            @Override
-            public void action() {
-                myAgent.addBehaviour(new SendOrderToMenuAgent());
-            }
-        });
+//        addBehaviour(new OneShotBehaviour() {
+//            @Override
+//            public void action() {
+//                myAgent.addBehaviour(new DeleteOrder());
+//            }
+//        });
+//        addBehaviour(new OneShotBehaviour() {
+//            @Override
+//            public void action() {
+//                myAgent.addBehaviour(new SendOrderToMenuAgent());
+//            }
+//        });
 
+        System.out.println("Manager " + getName() + " is set");
+        System.out.println(getAID());
     }
 
     // По тз
-    private class CreateOrder extends Behaviour {
+    private class CreateOrder extends CyclicBehaviour {
         @Override
         public void action() {
+            System.out.println("trying to receive message");
             var message = myAgent.receive();
             if (message != null) {
                 try {
-                    response = (ArrayList<AID>) message.getContentObject();
-                    try {
-                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
-                        countOfOrders++;
-                        var s = new StringBuilder("order ").append(countOfOrders);
-                        mainContainer.createNewAgent(s.toString(), OrderAgent.class.getName(), new ArrayList[]{response}).start();
-                    } catch (StaleProxyException e) {
-                        throw new RuntimeException(e);
+                    System.out.println("Message received");
+                    var response = (ArrayList<String>) message.getContentObject();
+                    for (var ord : response) {
+                        System.out.println(ord);
                     }
+//                    try {
+//                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
+//                        countOfOrders++;
+//                        var s = new StringBuilder("order ").append(countOfOrders);
+//                        mainContainer.createNewAgent(s.toString(), OrderAgent.class.getName(), new ArrayList[]{response}).start();
+//                    } catch (StaleProxyException e) {
+//                        throw new RuntimeException(e);
+//                    }
                 } catch (UnreadableException e) {
-                    throw new RuntimeException(e);
+                    System.out.println(e.getMessage());
                 }
             } else {
                 block();
             }
-        }
-
-        @Override
-        public boolean done() {
-            return true;
         }
     }
 
@@ -109,11 +107,11 @@ public class ManagerAgent extends Agent {
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.addReceiver(new AID("Menu", AID.ISLOCALNAME));
             msg.setLanguage("English");
-            try {
-                msg.setContentObject(response);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                msg.setContentObject(response);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
             send(msg);
         }
 
