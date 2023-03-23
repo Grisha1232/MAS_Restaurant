@@ -3,36 +3,40 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 
-import java.util.Date;
 import java.util.Deque;
 
 public class MealsBeveragesAgent extends Agent {
+    String mealName;
+    Integer ordDish;
+    Integer processorID;
+    Deque<AID> operations;
 
     @Override
     protected void setup() {
-        super.setup();
+        // TODO: get from arguments what need to cook
+        addBehaviour(new CookMeal());
     }
 
-    private static class CookMeal extends Behaviour {
-
-        private int             processId;
-        private int             orderedDish;
-        private Date            processStarted;
-        private Date            processEnded;
-        private boolean         isProcessActive;
-        private Deque<AID> processOperations;
+    private class CookMeal extends Behaviour {
+        boolean isDone = false;
         @Override
         public void action() {
-            if (!processOperations.isEmpty()) {
-                var operation = processOperations.pop();
-                // do some operation
+            if (!operations.isEmpty()) {
+                var operation = operations.getFirst();
+                var msg = new ACLMessage(ACLMessage.INFORM);
+                msg.addReceiver(operation);
+                msg.setContent("start");
+                send(msg);
+            } else {
+                isDone = true;
             }
         }
 
         @Override
         public boolean done() {
-            return false;
+            return isDone;
         }
     }
 }

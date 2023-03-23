@@ -20,7 +20,7 @@ public class VisitorAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Visitor " + getAID().getName() + " set");
-
+        // TODO: Сделать логику поведения
     }
 
     private class AddDishToOrder extends Behaviour {

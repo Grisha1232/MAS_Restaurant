@@ -27,16 +27,16 @@ public class ProductAgent extends Agent {
         storage = (AID) args[3];
         isReserved = true;
 
-        addBehaviour(new OneShotBehaviour() {
-            @Override
-            public void action() {
-                myAgent.addBehaviour(new Reserve());
-            }
-        });
+        // TODO: addBehaviour with certain amount of reservation
     }
 
 
     private static class Reserve extends Behaviour {
+        Integer reserveAmount;
+
+        Reserve(Integer reserveAmount) {
+            this.reserveAmount = reserveAmount;
+        }
 
         @Override
         public void action() {
