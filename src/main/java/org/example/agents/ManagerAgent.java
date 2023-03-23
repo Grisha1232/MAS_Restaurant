@@ -53,7 +53,7 @@ public class ManagerAgent extends Agent {
             var message = myAgent.receive();
             if (message != null) {
                 try {
-                    System.out.println("Message received");
+                    System.out.println("Message received from " + message.getSender().getName());
                     var response = (ArrayList<String>) message.getContentObject();
                     for (var ord : response) {
                         System.out.println(ord);

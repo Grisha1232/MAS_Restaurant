@@ -20,6 +20,8 @@ public class Main {
         Object[] arg = {r};
         var manager = r.createNewAgent("Manager", ManagerAgent.class.getName(), arg);
         manager.start();
-        r.createNewAgent("Visitor", VisitorAgent.class.getName(), null).start();
+        r.createNewAgent("Visitor1", VisitorAgent.class.getName(), null).start();
+        r.createNewAgent("Visitor2", VisitorAgent.class.getName(), null).start();
+        r.createNewAgent("Visitor3", VisitorAgent.class.getName(), null).start();
     }
 }
