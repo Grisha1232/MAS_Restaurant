@@ -13,16 +13,25 @@ public class EquipmentAgent extends Agent {
         // getArguments()
     }
 
-    private class ReserveForOperation extends Behaviour {
+    private class ReserveEquipment extends Behaviour {
 
         @Override
         public void action() {
-            isEquipmentActive = !isEquipmentActive;
+            var msg = myAgent.receive();
+            if (msg != null) {
+                if (msg.getContent().equals("reserve")) {
+                    isEquipmentActive = true;
+                } else {
+                    isEquipmentActive = false;
+                }
+            } else {
+                block();
+            }
         }
 
         @Override
         public boolean done() {
-            return true;
+            return false;
         }
     }
 
