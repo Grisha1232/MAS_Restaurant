@@ -3,6 +3,7 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
@@ -11,15 +12,17 @@ import java.util.Deque;
 public class OrderAgent extends Agent {
     // Contains mealsBeveragesAgents
     Deque<AID> meals;
+    Integer orderID;
 
     @Override
     protected void setup() {
         var args = getArguments();
-
+        this.meals = (Deque<AID>) args[0];
+        this.orderID = (Integer) args[1];
         // TODO: addBehaviour to agent
     }
 
-    private class ReceiveOrder extends Behaviour {
+    private class ReceiveOrder extends CyclicBehaviour {
 
         @Override
         public void action() {
@@ -39,11 +42,6 @@ public class OrderAgent extends Agent {
             } else {
                 block();
             }
-        }
-
-        @Override
-        public boolean done() {
-            return false;
         }
     }
 

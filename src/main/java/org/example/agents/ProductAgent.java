@@ -3,6 +3,7 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 
@@ -31,7 +32,7 @@ public class ProductAgent extends Agent {
     }
 
 
-    private static class Reserve extends Behaviour {
+    private static class Reserve extends CyclicBehaviour {
         Integer reserveAmount;
 
         Reserve(Integer reserveAmount) {
@@ -42,15 +43,11 @@ public class ProductAgent extends Agent {
         public void action() {
             var msg = myAgent.receive();
             if (msg != null) {
-
+                System.out.println("Product: (" + myAgent.getLocalName() + ") received message for reservation");
+                System.out.println("Reservation for amount: " + msg.getContent());
             } else {
                 block();
             }
-        }
-
-        @Override
-        public boolean done() {
-            return true;
         }
     }
 }
