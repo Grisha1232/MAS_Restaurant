@@ -35,6 +35,7 @@ public class OrderAgent extends Agent {
         public void action() {
             if (!meals.isEmpty()) {
                 var meal = meals.remove(0);
+                System.out.println("Need to send message to StorageAgent about products " + meal);
                 // TODO: запрос складу о наличии продуктов для данного блюда
             }
         }
