@@ -1,8 +1,9 @@
 package org.example.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Storage {
+public class Storage implements Serializable {
     public int prod_item_id;
     public int prod_item_type;
     public String prod_item_name;
