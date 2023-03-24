@@ -17,7 +17,6 @@ public class ProductAgent extends Agent {
     String prodTypeName;
     boolean prodIsFood;
     Double amountOfProduct;
-    AID storage;
 
 
     @Override
@@ -26,10 +25,10 @@ public class ProductAgent extends Agent {
         prodTypeId = (int) args[0];
         prodTypeName = (String) args[1];
         prodIsFood = (boolean) args[2];
-        storage = (AID) args[3];
-        amountOfProduct = (Double) args[4];
+        amountOfProduct = (Double) args[3];
 
         addBehaviour(new WaitUntilReservation());
+        System.out.println(getLocalName() + ": " + "has been setup");
     }
 
 
@@ -41,18 +40,21 @@ public class ProductAgent extends Agent {
             var msg = myAgent.receive();
             if (msg != null) {
                 System.out.println("Product: (" + myAgent.getLocalName() + ") received message for reservation");
-                System.out.println("Reservation for amount: " + msg.getContent());
+                try {
+                    System.out.println("Product: Reservation for amount: " + (Integer) msg.getContentObject());
+                } catch (UnreadableException e) {
+                    throw new RuntimeException(e);
+                }
                 try {
                     var amount = (Integer) msg.getContentObject();
                     if (amountOfProduct < amount) {
                         // TODO: нужно что-то делать при недопстатке
+                        System.out.println("Product: not enough product amount");
                     } else {
                         // TODO: отправить сообщение о резервации
                         amountOfProduct -= amount;
                         // Если не осталось продукта он удаляется (Хотя возможно стоит оставить??)
-                        if (amountOfProduct <= 0) {
-                            myAgent.doDelete();
-                        }
+
                     }
                 } catch (UnreadableException e) {
                     System.out.println("Do not specified amount of product");

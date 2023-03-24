@@ -51,11 +51,11 @@ public class ManagerAgent extends Agent {
     private class CreateOrder extends CyclicBehaviour {
         @Override
         public void action() {
-            System.out.println("trying to receive message");
+            System.out.println("Manager: trying to receive message");
             var message = myAgent.receive();
             if (message != null) {
                 try {
-                    System.out.println("Message received from " + message.getSender().getName());
+                    System.out.println("Manager: Message received from " + message.getSender().getName());
                     var response = (ArrayList<Integer>) message.getContentObject();
                     for (var ord : response) {
                         System.out.println(ord);

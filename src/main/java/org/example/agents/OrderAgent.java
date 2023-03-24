@@ -3,11 +3,9 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
-import jade.wrapper.StaleProxyException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class OrderAgent extends Agent {
@@ -35,8 +33,28 @@ public class OrderAgent extends Agent {
         public void action() {
             if (!meals.isEmpty()) {
                 var meal = meals.remove(0);
-                System.out.println("Need to send message to StorageAgent about products " + meal);
+                System.out.println("Send message to StorageAgent about products for meal(" + meal +")");
+                // TODO: получение списка продуктов для приготовления блюда из файла
                 // TODO: запрос складу о наличии продуктов для данного блюда
+                var msg = new ACLMessage(ACLMessage.INFORM);
+                msg.addReceiver(new AID("Storage", AID.ISLOCALNAME));
+                String content = "product " + meal.toString();
+                Integer i = 1;
+                if (meal == 1) {
+                    try {
+                        msg.setContentObject(new Object[]{content, i});
+                    } catch (IOException e) {
+                        System.out.println("Something went wrong with setting content for product 1\n" + e.getMessage());
+                    }
+                } else {
+                    try {
+                        msg.setContentObject(new Object[]{content, i});
+                    } catch (IOException e) {
+                        System.out.println("Something went wrong with setting content for product 2\n" + e.getMessage());
+                    }
+                }
+                System.out.println("OrderAgent SEND MESSAGE WITH CONTENT: " + content);
+                myAgent.send(msg);
             }
         }
 
