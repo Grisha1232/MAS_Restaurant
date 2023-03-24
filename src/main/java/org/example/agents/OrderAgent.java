@@ -25,7 +25,7 @@ public class OrderAgent extends Agent {
         this.orderID = (Integer) args[1];
         this.mainContainer = (jade.wrapper.AgentContainer) args[2];
 
-        // TODO: addBehaviour to agent
+        addBehaviour(new CreateMeals());
         System.out.println("Start new order number: " + orderID);
     }
 
