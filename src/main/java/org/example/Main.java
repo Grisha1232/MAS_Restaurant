@@ -20,7 +20,7 @@ public class Main {
         var r = rt.createMainContainer(p);
         // TODO: считывание входных файлов
         // TODO: Содание StorageAgent из введенных данных (заменить null на параметры для Storage)
-        r.createNewAgent("Storage", StorageAgent.class.getName(), null);
+        r.createNewAgent("Storage", StorageAgent.class.getName(), new Object[]{r}).start();
         r.createNewAgent("Manager", ManagerAgent.class.getName(), new Object[]{r}).start();
         r.createNewAgent("Visitor1", VisitorAgent.class.getName(), null).start();
         r.createNewAgent("Visitor2", VisitorAgent.class.getName(), null).start();
