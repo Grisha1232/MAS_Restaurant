@@ -20,6 +20,7 @@ public class ParsingStorage {
                     arr.getJSONObject(i).getString("prod_item_unit"),
                     arr.getJSONObject(i).getDouble("prod_item_quantity"),
                     arr.getJSONObject(i).getDouble("prod_item_cost"),
+                    // TODO: распарсить дату.
                     new Date(), new Date()
             ));
         }
