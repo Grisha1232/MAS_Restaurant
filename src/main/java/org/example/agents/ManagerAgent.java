@@ -7,8 +7,10 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.ControllerException;
+import jade.wrapper.StaleProxyException;
 
 import java.util.ArrayList;
+import java.util.Deque;
 
 public class ManagerAgent extends Agent {
 
@@ -54,18 +56,18 @@ public class ManagerAgent extends Agent {
             if (message != null) {
                 try {
                     System.out.println("Message received from " + message.getSender().getName());
-                    var response = (ArrayList<String>) message.getContentObject();
+                    var response = (ArrayList<Integer>) message.getContentObject();
                     for (var ord : response) {
                         System.out.println(ord);
                     }
-//                    try {
-//                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
-//                        countOfOrders++;
-//                        var s = new StringBuilder("order ").append(countOfOrders);
-//                        mainContainer.createNewAgent(s.toString(), OrderAgent.class.getName(), new ArrayList[]{response}).start();
-//                    } catch (StaleProxyException e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
+                        countOfOrders++;
+                        var s = new StringBuilder("order ").append(countOfOrders);
+                        mainContainer.createNewAgent(s.toString(), OrderAgent.class.getName(), new Object[]{response, countOfOrders, mainContainer}).start();
+                    } catch (StaleProxyException e) {
+                        throw new RuntimeException(e);
+                    }
                 } catch (UnreadableException e) {
                     System.out.println(e.getMessage());
                 }

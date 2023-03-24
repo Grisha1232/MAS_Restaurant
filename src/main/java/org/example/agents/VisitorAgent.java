@@ -11,12 +11,13 @@ import org.example.Pair;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class VisitorAgent extends Agent {
     String name;
     int orderTotal;
-    ArrayList<String> order;
+    ArrayList<Integer> order;
 
     AID manager;
 
@@ -26,8 +27,9 @@ public class VisitorAgent extends Agent {
         // TODO: Сделать логику поведения
         manager = getAID("Manager");
         System.out.println(manager.getName());
-        order = new ArrayList<>(List.of(new String[]{"something", "stupid", "added", "to", "order"}));
-        addBehaviour(new TickerBehaviour(this, 6000) {
+        order = new ArrayList<>(List.of(new Integer[]{1, 2, 3, 4, 5}));
+        var rnd = new Random();
+        addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
             @Override
             protected void onTick() {
                 addBehaviour(new MakeOrder());
@@ -37,9 +39,9 @@ public class VisitorAgent extends Agent {
 
     private class AddDishToOrder extends Behaviour {
 
-        String toAdd;
+        Integer toAdd;
 
-        AddDishToOrder(String dish) {
+        AddDishToOrder(Integer dish) {
             toAdd = dish;
         }
 
@@ -56,9 +58,9 @@ public class VisitorAgent extends Agent {
 
     private class DeleteDishFromOrder extends Behaviour {
 
-        String toDelete;
+        Integer toDelete;
 
-        DeleteDishFromOrder(String dish) {
+        DeleteDishFromOrder(Integer dish) {
             toDelete = dish;
         }
         @Override

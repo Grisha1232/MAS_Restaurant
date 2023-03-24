@@ -8,18 +8,15 @@ import jade.lang.acl.ACLMessage;
 import java.util.Deque;
 
 public class MealsBeveragesAgent extends Agent {
-    String mealName;
     Integer ordDish;
-    Integer processorID;
     Deque<AID> operations;
+    private jade.wrapper.AgentContainer mainContainer;
 
     @Override
     protected void setup() {
         var args = getArguments();
-        this.mealName = (String) args[0];
         this.ordDish = (Integer) args[1];
-        this.processorID = (Integer) args[2];
-        this.operations = (Deque<AID>) args[3];
+        // TODO: сделать запрос StorageArgent о операциях и названии блюда.
         addBehaviour(new CookMeal());
     }
 

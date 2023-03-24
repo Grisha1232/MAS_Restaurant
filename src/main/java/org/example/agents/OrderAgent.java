@@ -6,44 +6,45 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.wrapper.StaleProxyException;
 
-import java.util.Deque;
+import java.util.ArrayList;
 
 public class OrderAgent extends Agent {
-    // Contains mealsBeveragesAgents
-    Deque<AID> meals;
+    // Содержит id блюд
+    ArrayList<Integer> meals;
     Integer orderID;
+
+    private jade.wrapper.AgentContainer mainContainer;
+
 
     @Override
     protected void setup() {
         var args = getArguments();
-        this.meals = (Deque<AID>) args[0];
+        this.meals = (ArrayList<Integer>) args[0];
         this.orderID = (Integer) args[1];
+        this.mainContainer = (jade.wrapper.AgentContainer) args[2];
+
         // TODO: addBehaviour to agent
+        System.out.println("Start new order number: " + orderID);
     }
 
-    private class ReceiveOrder extends CyclicBehaviour {
+    private class CreateMeals extends Behaviour {
 
         @Override
         public void action() {
-            var msg = myAgent.receive();
-            if (msg != null) {
-                try {
-                    meals = (Deque<AID>) msg.getContentObject();
-                } catch (UnreadableException e) {
-                    throw new RuntimeException(e);
-                }
-                if (meals != null) {
-                    var messageToMealsAgent = new ACLMessage(ACLMessage.INFORM);
-                    // TODO: send message to StorageAgent about product we have and reserve them if have
-                    // TODO: cancel if we do not have these products
-
-                }
-            } else {
-                block();
+            if (!meals.isEmpty()) {
+                var meal = meals.remove(0);
+                // TODO: запрос складу о наличии продуктов для данного блюда
             }
         }
+
+        @Override
+        public boolean done() {
+            return meals.isEmpty();
+        }
     }
+
 
     private class NotifyAboutTime extends Behaviour {
         Integer step = 0;
