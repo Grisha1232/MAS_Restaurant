@@ -43,6 +43,7 @@ public class OrderAgent extends Agent {
                 if (meal == 1) {
                     try {
                         msg.setContentObject(new Object[]{content, i});
+
                     } catch (IOException e) {
                         System.out.println("Something went wrong with setting content for product 1\n" + e.getMessage());
                     }

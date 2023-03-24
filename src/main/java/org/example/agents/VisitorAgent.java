@@ -99,7 +99,8 @@ public class VisitorAgent extends Agent {
             }
             myAgent.send(msg);
             System.out.println("sent message");
-            myAgent.addBehaviour(new ReceiveAboutTime());
+            // myAgent.addBehaviour(new ReceiveAboutTime());
+            myAgent.doDelete();
         }
 
         @Override

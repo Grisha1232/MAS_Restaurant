@@ -76,31 +76,6 @@ public class ManagerAgent extends Agent {
             }
         }
     }
-
-    // По тз
-    private class DeleteOrder extends Behaviour {
-
-        @Override
-        public void action() {
-            // TODO: нужно опеределить как удалять ордер агента, пока что делаю по никнейму.
-            var nickToDelete = myAgent.receive();
-            if (nickToDelete != null) {
-                try {
-                    mainContainer.getAgent(nickToDelete.getContent()).kill();
-                } catch (ControllerException e) {
-                    throw new RuntimeException("Didn't find nickname of agent");
-                }
-            } else {
-                block();
-            }
-
-        }
-
-        @Override
-        public boolean done() {
-            return true;
-        }
-    }
     // по схеме
     private class SendOrderToMenuAgent extends Behaviour {
         // TODO: как мы узнаем какие именно продукты резервировать? Пока что просто кинул список AID.
