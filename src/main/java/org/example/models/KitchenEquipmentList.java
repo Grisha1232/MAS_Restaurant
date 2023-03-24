@@ -1,6 +1,8 @@
 package org.example.models;
 
-public class KitchenEquipmentList {
+import java.io.Serializable;
+
+public class KitchenEquipmentList implements Serializable {
     public int equip_type_id;
     public String equip_type_name;
 
