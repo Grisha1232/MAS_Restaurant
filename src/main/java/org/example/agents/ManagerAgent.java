@@ -52,8 +52,9 @@ public class ManagerAgent extends Agent {
                     System.out.println("Manager: Message received from " + response.vis_name);
                     for (var ord : response.vis_ord_dishes) {
                         // TODO: отослать агнету Меню о актуализации меню
-                        System.out.print(ord + ", ");
+                        System.out.print(ord.menu_dish_id + ", ");
                     }
+                    System.out.println();
 //                    try {
 //                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
 //                        countOfOrders++;

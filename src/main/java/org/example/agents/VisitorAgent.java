@@ -28,6 +28,18 @@ public class VisitorAgent extends Agent {
 
         thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
+        var id = rnd.nextInt();
+        Integer price;
+        if (id == 0) {
+            price = 20;
+        } else if (id == 1) {
+            price = 30;
+        } else if (id == 2) {
+            price = 50;
+        } else {
+            price = 100;
+        }
+        thisVisitor.vis_ord_dishes.add(new Menu(id, id, price, true));
         addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
             @Override
             protected void onTick() {

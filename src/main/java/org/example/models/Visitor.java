@@ -9,10 +9,10 @@ public class Visitor implements Serializable {
     public Date vis_ord_started;
     public Date vis_ord_ended;
     public int vis_ord_total;
-    public ArrayList<Operation> vis_ord_dishes;
+    public ArrayList<Menu> vis_ord_dishes;
 
     public Visitor(String vis_name, Date vis_ord_started, Date vis_ord_ended,
-                   int vis_ord_total, ArrayList<Operation> vis_ord_dishes) {
+                   int vis_ord_total, ArrayList<Menu> vis_ord_dishes) {
         this.vis_name = vis_name;
         this.vis_ord_started = vis_ord_started;
         this.vis_ord_ended = vis_ord_ended;
