@@ -8,6 +8,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Pair;
 import org.example.models.Menu;
+import org.example.models.Visitor.VisOrdDishes;
 import org.example.models.Visitor.Visitor;
 
 import java.io.IOException;
@@ -26,18 +27,8 @@ public class VisitorAgent extends Agent {
 
         thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
-        var id = rnd.nextInt();
-        Integer price;
-        if (id == 0) {
-            price = 20;
-        } else if (id == 1) {
-            price = 30;
-        } else if (id == 2) {
-            price = 50;
-        } else {
-            price = 100;
-        }
-        // thisVisitor.vis_ord_dishes.add(new Menu(id, id, price, true));
+        var id = rnd.nextInt(0, 6);
+        thisVisitor.vis_ord_dishes.add(new VisOrdDishes(id, id));
         addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
             @Override
             protected void onTick() {

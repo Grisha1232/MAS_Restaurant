@@ -42,7 +42,7 @@ public class ManagerAgent extends Agent {
                     // TODO: Отсылать нужно с информацией от какого посетителя пришел этот заказ чтобы создать позже заказ
 
                     for (var ord : response.vis_ord_dishes) {
-                        System.out.print(ord.menu_dish_id + ", ");
+                        System.out.print(ord.ord_dish_id + ", ");
                     }
                     System.out.println();
                 } catch (UnreadableException e) {
