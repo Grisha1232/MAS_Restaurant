@@ -41,7 +41,7 @@ public class VisitorAgent extends Agent {
 
         @Override
         public void action() {
-            System.out.println("Making order");
+            System.out.println(myAgent.getLocalName() + ": Making order");
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.addReceiver(manager);
             msg.setLanguage("English");
@@ -53,15 +53,15 @@ public class VisitorAgent extends Agent {
             }
             try {
                 if (msg.getContentObject() != null) {
-                    System.out.println("message has been set");
+                    System.out.println(myAgent.getLocalName() + ": message has been set");
                 } else {
-                    System.out.println("message has not been set");
+                    System.out.println(myAgent.getLocalName() + ": message has not been set");
                 }
             } catch (UnreadableException e) {
                 throw new RuntimeException(e);
             }
             myAgent.send(msg);
-            System.out.println("sent message");
+            System.out.println(myAgent.getLocalName() + ": sent message");
             myAgent.addBehaviour(new ReceiveAboutTime());
         }
 
