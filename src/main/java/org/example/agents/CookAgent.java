@@ -1,20 +1,18 @@
 package org.example.agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
+
+import java.util.Queue;
 
 public class CookAgent extends Agent {
-    Integer id;
-    String name;
-    Boolean isActive;
+    double timeToWait;
 
     @Override
     protected void setup() {
-        var args = getArguments();
-        this.id = (Integer) args[0];
-        this.name = (String) args[1];
-        this.isActive = (Boolean) args[2];
-
         addBehaviour(new ReserveCook());
     }
 
@@ -24,7 +22,16 @@ public class CookAgent extends Agent {
         public void action() {
             var msg = myAgent.receive();
             if (msg != null) {
-                isActive = msg.getContent().equals("Reserve");
+                try {
+                    timeToWait = (double)msg.getContentObject();
+                    myAgent.wait((long)timeToWait * 60);
+                    var message = new ACLMessage(ACLMessage.INFORM);
+                    message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+                    message.setContent("done");
+                    send(message);
+                } catch (UnreadableException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 block();
             }

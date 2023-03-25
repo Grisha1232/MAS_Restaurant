@@ -38,13 +38,13 @@ public class MenuAgent extends Agent {
                 } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }
-                // TODO: запрос Складу об актуальности меню
+
             } else {
                 block();
             }
         }
     }
-
+    //TODO: дописать чтоб из блюда получалась операция.
     private class SendAboutMenu extends CyclicBehaviour {
         @Override
         public void action() {

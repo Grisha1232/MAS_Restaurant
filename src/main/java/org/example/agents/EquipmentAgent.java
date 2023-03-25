@@ -1,43 +1,38 @@
 package org.example.agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 public class EquipmentAgent extends Agent {
-    Integer equipmentType;
-    String equipmentName;
-    Boolean isEquipmentActive = false;
+    double timeToWait;
     @Override
     protected void setup() {
-        var args = getArguments();
-        this.equipmentType = (Integer) args[0];
-        this.equipmentName = (String) args[1];
-        this.isEquipmentActive = (Boolean) args[2];
-
-        addBehaviour(new CyclicBehaviour() {
-            @Override
-            public void action() {
-                addBehaviour(new ReserveEquipment());
-            }
-        });
+       addBehaviour(new ReserveEquipment());
     }
 
-    private class ReserveEquipment extends Behaviour {
+    private class ReserveEquipment extends CyclicBehaviour {
 
         @Override
         public void action() {
             var msg = myAgent.receive();
             if (msg != null) {
-                isEquipmentActive = msg.getContent().equals("reserve");
+                try {
+                    timeToWait = (double)msg.getContentObject();
+                    myAgent.wait((long)timeToWait * 60);
+                    var message = new ACLMessage(ACLMessage.INFORM);
+                    message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+                    message.setContent("done");
+                    send(message);
+                } catch (UnreadableException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 block();
             }
-        }
-
-        @Override
-        public boolean done() {
-            return false;
         }
     }
 

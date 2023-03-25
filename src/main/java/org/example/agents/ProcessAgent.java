@@ -1,42 +1,73 @@
 package org.example.agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.DFService;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.example.Parsing.ParsingCooks;
+import org.example.Parsing.ParsingEquipment;
 import org.example.models.Cooks;
+import org.example.models.DishCard.DishCard;
 import org.example.models.KitchenEquipment;
+import org.example.models.Process;
+import org.example.models.Visitor.VisOrdDishes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProcessAgent extends Agent {
+    private VisOrdDishes meal;
+    private Process necessaryForDish;
+
     @Override
     protected void setup() {
-        super.setup();
+        meal = (VisOrdDishes) getArguments()[0];
+        addBehaviour(new AskOperations());
     }
 
-    boolean allIsAvailable = true;
 
-    private class ReserveEquipment extends Behaviour {
+    private class AskOperations extends OneShotBehaviour {
         @Override
         public void action() {
-            // TODO: при многоповторке не особо понятно как будет работать ниже строчка.
-            ACLMessage msg = myAgent.receive();
+            var msg = new ACLMessage(ACLMessage.INFORM);
+            msg.addReceiver(new AID("Menu", AID.ISLOCALNAME));
+            try {
+                msg.setContentObject(meal);
+                send(msg);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            addBehaviour(new ReceiveDishCard());
+        }
+    }
+
+    private class ReceiveDishCard extends Behaviour {
+        @Override
+        public void action() {
+            var msg = receive();
             if (msg != null) {
                 try {
-                   var machinesToReserve =(ArrayList<KitchenEquipment>)msg.getContentObject();
-                    for (KitchenEquipment kitchenEquipment : machinesToReserve) {
-                        if (!kitchenEquipment.equip_active) {
-                            allIsAvailable = false;
-                            break;
+                    necessaryForDish = (Process) msg.getContentObject();
+                    for (var i : ParsingCooks.cooks) {
+                        if (i.cook_id == necessaryForDish.oper_coocker_id) {
+                            var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                            messageToReserve.addReceiver(new AID(i.cook_name, AID.ISLOCALNAME));
+                            messageToReserve.setContentObject(necessaryForDish.oper_time);
+                            send(messageToReserve);
                         }
                     }
-                    if (allIsAvailable) {
-                        for (var i : machinesToReserve) {
-                            i.equip_active = false;
+                    for (var i : ParsingEquipment.equipments) {
+                        if (i.equip_id == necessaryForDish.oper_equip_id) {
+                            var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                            messageToReserve.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
+                            messageToReserve.setContentObject(necessaryForDish.oper_time);
+                            send(messageToReserve);
                         }
                     }
-                } catch (UnreadableException e) {
+                } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -46,39 +77,7 @@ public class ProcessAgent extends Agent {
 
         @Override
         public boolean done() {
-            return allIsAvailable;
-        }
-    }
-    private class ReserveCooks extends Behaviour {
-        @Override
-        public void action() {
-            // TODO: при многоповторке не особо понятно как будет работать ниже строчка.
-            ACLMessage msg = myAgent.receive();
-            if (msg != null) {
-                try {
-                    var cooksToReserve =(ArrayList<Cooks>)msg.getContentObject();
-                    for (Cooks i : cooksToReserve) {
-                        if (!i.cook_active) {
-                            allIsAvailable = false;
-                            break;
-                        }
-                    }
-                    if (allIsAvailable) {
-                        for (var i : cooksToReserve) {
-                            i.cook_active = false;
-                        }
-                    }
-                } catch (UnreadableException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                block();
-            }
-        }
-
-        @Override
-        public boolean done() {
-            return allIsAvailable;
+            return necessaryForDish != null;
         }
     }
 }

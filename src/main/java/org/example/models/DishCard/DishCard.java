@@ -9,16 +9,13 @@ public class DishCard implements Serializable {
     public String dish_name;
     public String card_descr;
     public double card_time;
-    public int equip_type;
     public ArrayList<Operation> operations;
 
-    public DishCard(int card_id, String dish_name, String card_descr, double card_time,
-                    int equip_type, ArrayList<Operation> operations) {
+    public DishCard(int card_id, String dish_name, String card_descr, double card_time, ArrayList<Operation> operations) {
         this.card_id = card_id;
         this.dish_name = dish_name;
         this.card_descr = card_descr;
         this.card_time = card_time;
-        this.equip_type = equip_type;
         this.operations = operations;
     }
 }

@@ -40,10 +40,7 @@ public class ManagerAgent extends Agent {
                 try {
                     var response = (Visitor) message.getContentObject();
                     System.out.println("Manager: Message received from " + response.vis_name);
-                    // TODO: отослать агнету Меню о актуализации меню
                     addBehaviour(new SendOrderToMenuAgent(response));
-                    // TODO: Отсылать нужно с информацией от какого посетителя пришел этот заказ чтобы создать позже заказ
-
                     for (var ord : response.vis_ord_dishes) {
                         System.out.print(ord.ord_dish_id + ", ");
                     }

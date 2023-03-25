@@ -45,7 +45,6 @@ public class VisitorAgent extends Agent {
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.addReceiver(manager);
             msg.setLanguage("English");
-            // TODO: Отосолать заказ
             try {
                 msg.setContentObject(thisVisitor);
             } catch (IOException e) {
