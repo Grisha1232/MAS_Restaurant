@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.example.Pair;
 import org.example.Parsing.ParsingDishCard;
 import org.example.Parsing.ParsingMenu;
 import org.example.models.DishCard.OperProduct;
@@ -51,7 +52,21 @@ public class MenuAgent extends Agent {
             System.out.println("Menu: trying to receive message from Storage");
             var msg = myAgent.receive();
             if (msg != null && msg.getSender().getLocalName().equals("Storage")) {
-                // TODO: Получив ответ от склада отослать обратно менеджеру
+                try {
+                    var pair = (Pair<Visitor, ArrayList<Integer>>)msg.getContentObject();
+                    var vis = pair.getFirst();
+                    var unv = pair.getSecond();
+                    // Удаляем блюда, которые не можем приготовить
+                    for (var i : unv) {
+                        vis.vis_ord_dishes.removeIf((x) -> x.menu_dish == i);
+                    }
+                    var message = new ACLMessage(ACLMessage.INFORM);
+                    message.addReceiver(new AID("Manager", AID.ISLOCALNAME));
+                    message.setContentObject(vis);
+                    send(message);
+                } catch (UnreadableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 block();
             }

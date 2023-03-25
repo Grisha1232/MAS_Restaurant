@@ -70,6 +70,7 @@ public class ManagerAgent extends Agent {
                 throw new RuntimeException(e);
             }
             send(msg);
+            addBehaviour(new ReceiveAnswerFromMenuAgent());
         }
 
         @Override
@@ -78,7 +79,9 @@ public class ManagerAgent extends Agent {
         }
     }
 
-    private class ReceiveAnswerFromMenuAgent extends CyclicBehaviour {
+    private class ReceiveAnswerFromMenuAgent extends Behaviour {
+
+        Visitor vis = null;
 
         @Override
         public void action() {
@@ -95,6 +98,11 @@ public class ManagerAgent extends Agent {
             } else {
                 block();
             }
+        }
+
+        @Override
+        public boolean done() {
+            return vis != null;
         }
     }
 

@@ -6,6 +6,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
+import org.example.Pair;
 import org.example.Parsing.ParsingDishCard;
 import org.example.Parsing.ParsingMenu;
 import org.example.Parsing.ParsingStorage;
@@ -15,7 +16,10 @@ import org.example.models.StorageList;
 import org.example.models.Visitor.VisOrdDishes;
 import org.example.models.Visitor.Visitor;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StorageAgent extends Agent {
 
@@ -37,43 +41,69 @@ public class StorageAgent extends Agent {
         @Override
         public void action() {
             var msg = myAgent.receive();
-            ArrayList<OperProduct> necessaryProducts = new ArrayList<>();
+            Map<Integer, ArrayList<OperProduct>> dishes = new HashMap<>();
             if (msg != null) {
                 try {
-                    int dish_card_id = 0;
                     var response = (Visitor) msg.getContentObject();
+                    Boolean flag = false;
+                    // Проходимся по всем блюдам пользователя
                     for (var meal : response.vis_ord_dishes) {
+                        // Проходимся по всем блюдам в меню
                         for (var i : ParsingMenu.dishesInMenu) {
+                            // Если id совпали то
                             if (i.menu_dish_id == meal.menu_dish) {
-                                dish_card_id = i.menu_dish_card;
+                                // Проходимся по карточкам
+                                for (var k : ParsingDishCard.dishCards) {
+                                    // Если совпали id карточек то
+                                    if (k.card_id == i.menu_dish_card) {
+                                        // Проходимся по операциям
+                                        for (var j : k.operations) {
+                                            // добавляем в мапу
+                                            dishes.put(i.menu_dish_card, j.oper_products);
+                                        }
+                                    }
+                                }
+                                flag = true;
                                 break;
                             }
                         }
-                        for (var i : ParsingDishCard.dishCards) {
-                            if (i.card_id == dish_card_id) {
-                                for (var j : i.operations) {
-                                    necessaryProducts.addAll(j.oper_products);
+                        if (flag) {
+                            break;
+                        }
+                    }
+
+                    ArrayList<Integer> unavailable = new ArrayList<>();
+                    for (var entry : dishes.entrySet()) {
+                        for (var product : entry.getValue()) {
+                            for (var available : availableProducts) {
+                                if (product.prod_type == available.prod_item_type) {
+                                    if (msg.getSender().getLocalName().equals("Menu")) {
+                                        if (available.prod_item_quantity - product.prod_quantity <= 0) {
+                                            // Добавляем в недоступные menu_dish_card (menu_dish)
+                                            unavailable.add(entry.getKey());
+                                        }
+                                    } else {
+                                        if (product.prod_type == available.prod_item_type) {
+                                            available.prod_item_quantity -= product.prod_quantity;
+                                        }
+                                    }
                                 }
                             }
+                        }
+                    }
+
+                    if (msg.getSender().getLocalName().equals("Menu")) {
+                        var message = new ACLMessage(ACLMessage.INFORM);
+                        message.addReceiver(new AID("Menu", AID.ISLOCALNAME));
+                        try {
+                            message.setContentObject(new Pair<>(response, unavailable));
+                            send(message);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 } catch (UnreadableException e) {
                     throw new RuntimeException(e);
-                }
-                for (var product : necessaryProducts) {
-                    for (var available : availableProducts) {
-                        if (product.prod_type == available.prod_item_type) {
-                            if (msg.getSender().getLocalName().equals("Menu")) {
-                                if (available.prod_item_quantity - product.prod_quantity <= 0) {
-                                    // TODO: отправить меню о недоступности блюда
-                                }
-                            } else {
-                                if (product.prod_type == available.prod_item_type) {
-                                    available.prod_item_quantity -= product.prod_quantity;
-                                }
-                            }
-                        }
-                    }
                 }
 
             } else {
