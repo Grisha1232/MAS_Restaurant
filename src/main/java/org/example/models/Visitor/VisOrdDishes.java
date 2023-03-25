@@ -1,6 +1,8 @@
 package org.example.models.Visitor;
 
-public class VisOrdDishes {
+import java.io.Serializable;
+
+public class VisOrdDishes implements Serializable {
     public int ord_dish_id;
     public int menu_dish;
 
