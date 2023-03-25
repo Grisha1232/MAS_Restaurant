@@ -7,6 +7,8 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Pair;
+import org.example.models.Menu;
+import org.example.models.Visitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,19 +17,16 @@ import java.util.Random;
 
 
 public class VisitorAgent extends Agent {
-    String name;
-    int orderTotal;
-    ArrayList<Integer> order;
+    Visitor thisVisitor;
 
     AID manager;
 
     @Override
     protected void setup() {
         System.out.println("Visitor " + getAID().getName() + " set");
-        // TODO: Сделать логику поведения
         manager = getAID("Manager");
-        System.out.println(manager.getName());
-        order = new ArrayList<>(List.of(new Integer[]{1, 2, 3, 4, 5}));
+
+        thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
         addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
             @Override
@@ -35,43 +34,6 @@ public class VisitorAgent extends Agent {
                 addBehaviour(new MakeOrder());
             }
         });
-    }
-
-    private class AddDishToOrder extends Behaviour {
-
-        Integer toAdd;
-
-        AddDishToOrder(Integer dish) {
-            toAdd = dish;
-        }
-
-        @Override
-        public void action() {
-            order.add(toAdd);
-        }
-
-        @Override
-        public boolean done() {
-            return true;
-        }
-    }
-
-    private class DeleteDishFromOrder extends Behaviour {
-
-        Integer toDelete;
-
-        DeleteDishFromOrder(Integer dish) {
-            toDelete = dish;
-        }
-        @Override
-        public void action() {
-            order.remove(toDelete);
-        }
-
-        @Override
-        public boolean done() {
-            return true;
-        }
     }
 
     private class MakeOrder extends Behaviour {
@@ -84,7 +46,7 @@ public class VisitorAgent extends Agent {
             msg.setLanguage("English");
             // TODO: Отосолать заказ
             try {
-                msg.setContentObject(order);
+                msg.setContentObject(thisVisitor);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
