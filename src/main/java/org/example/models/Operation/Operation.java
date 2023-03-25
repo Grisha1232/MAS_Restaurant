@@ -1,4 +1,6 @@
-package org.example.models;
+package org.example.models.Operation;
+
+import org.example.models.Process;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,11 +13,11 @@ public class Operation implements Serializable {
     public Date proc_started;
     public Date proc_ended;
     public boolean proc_active;
-    public ArrayList<Process> proc_operations;
+    public ArrayList<OperProc> proc_operations;
 
 
     public Operation(int proc_id, int ord_dish, Date proc_started,
-                     Date proc_ended, boolean proc_active, ArrayList<Process> proc_operations) {
+                     Date proc_ended, boolean proc_active, ArrayList<OperProc> proc_operations) {
         this.proc_id = proc_id;
         this.ord_dish = ord_dish;
         this.proc_started = proc_started;

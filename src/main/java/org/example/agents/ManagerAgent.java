@@ -6,8 +6,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.wrapper.StaleProxyException;
-import org.example.models.Visitor;
+import org.example.models.Visitor.Visitor;
 
 public class ManagerAgent extends Agent {
 

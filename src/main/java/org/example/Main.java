@@ -9,10 +9,9 @@ import org.example.agents.MenuAgent;
 import org.example.agents.StorageAgent;
 import org.example.agents.VisitorAgent;
 import org.example.models.Menu;
-import org.example.models.Visitor;
+import org.example.models.Visitor.Visitor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 
 
