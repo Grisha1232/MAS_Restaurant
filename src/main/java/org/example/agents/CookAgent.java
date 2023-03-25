@@ -6,8 +6,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-import java.util.Queue;
-
 public class CookAgent extends Agent {
     double timeToWait;
 

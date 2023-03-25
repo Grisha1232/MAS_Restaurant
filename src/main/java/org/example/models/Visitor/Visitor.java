@@ -1,7 +1,5 @@
 package org.example.models.Visitor;
 
-import org.example.models.Menu;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

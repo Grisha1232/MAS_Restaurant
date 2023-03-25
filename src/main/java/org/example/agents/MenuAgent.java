@@ -6,10 +6,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Pair;
-import org.example.Parsing.ParsingDishCard;
-import org.example.Parsing.ParsingMenu;
-import org.example.models.DishCard.OperProduct;
-import org.example.models.Menu;
 import org.example.models.Visitor.Visitor;
 
 import java.io.IOException;

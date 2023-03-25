@@ -7,7 +7,6 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Pair;
-import org.example.models.Menu;
 import org.example.models.Visitor.VisOrdDishes;
 import org.example.models.Visitor.Visitor;
 

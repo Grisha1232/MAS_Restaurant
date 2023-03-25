@@ -4,14 +4,10 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.DFService;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Parsing.ParsingCooks;
 import org.example.Parsing.ParsingEquipment;
-import org.example.models.Cooks;
-import org.example.models.DishCard.DishCard;
-import org.example.models.KitchenEquipment;
 import org.example.models.Process;
 import org.example.models.Visitor.VisOrdDishes;
 

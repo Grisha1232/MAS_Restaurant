@@ -5,15 +5,12 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.wrapper.StaleProxyException;
 import org.example.Pair;
 import org.example.Parsing.ParsingDishCard;
 import org.example.Parsing.ParsingMenu;
-import org.example.Parsing.ParsingStorage;
 import org.example.models.DishCard.OperProduct;
 import org.example.models.Storage;
 import org.example.models.StorageList;
-import org.example.models.Visitor.VisOrdDishes;
 import org.example.models.Visitor.Visitor;
 
 import java.io.IOException;
