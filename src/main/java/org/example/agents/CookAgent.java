@@ -1,7 +1,6 @@
 package org.example.agents;
 
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 
 public class CookAgent extends Agent {
