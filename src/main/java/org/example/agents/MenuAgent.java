@@ -1,11 +1,17 @@
 package org.example.agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.example.Parsing.ParsingDishCard;
+import org.example.Parsing.ParsingMenu;
+import org.example.models.DishCard.OperProduct;
 import org.example.models.Menu;
 import org.example.models.Visitor.Visitor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuAgent extends Agent {
@@ -24,9 +30,12 @@ public class MenuAgent extends Agent {
             var msg = myAgent.receive();
             if (msg != null && !msg.getSender().getLocalName().equals("Storage")) {
                 try {
-                    Visitor response = (Visitor) msg.getContentObject();
-
-                } catch (UnreadableException e) {
+                    Visitor vis = (Visitor) msg.getContentObject();
+                    var message = new ACLMessage(ACLMessage.INFORM);
+                    message.addReceiver(new AID("Storage", AID.ISLOCALNAME));
+                    message.setContentObject(vis);
+                    send(message);
+                } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }
                 // TODO: запрос Складу об актуальности меню
