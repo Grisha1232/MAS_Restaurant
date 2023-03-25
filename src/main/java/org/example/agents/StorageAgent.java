@@ -6,63 +6,57 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
+import org.example.Parsing.ParsingDishCard;
+import org.example.Parsing.ParsingMenu;
+import org.example.Parsing.ParsingStorage;
+import org.example.models.DishCard.OperProduct;
+import org.example.models.Storage;
+import org.example.models.StorageList;
+import org.example.models.Visitor.VisOrdDishes;
+
 import java.util.ArrayList;
 
 public class StorageAgent extends Agent {
 
-    private ArrayList<String> nicknamesOfProducts;
+
     private jade.wrapper.AgentContainer mainContainer;
+    private ArrayList<Storage> availableProducts;
+    private ArrayList<StorageList> allPossibleProducts;
+
     @Override
     protected void setup() {
         var args = getArguments();
-        System.out.println("StorageAgent " + getName() + " is set");
-        mainContainer = (jade.wrapper.AgentContainer) args[0];
-        nicknamesOfProducts = new ArrayList<>();
-        // TODO: изменить на агрументы переданые при создании.
-        for (int i = 0; i < 10; i++) {
-            try {
-                mainContainer.createNewAgent("product " + i, ProductAgent.class.getName(), new Object[]{i, "product " + i, true, 10.0}).start();
-                nicknamesOfProducts.add("product " + i);
-            } catch (StaleProxyException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        System.out.print("Storage: ");
-        for (var prod : nicknamesOfProducts) {
-            System.out.print(prod + " ");
-        }
-        System.out.println();
+        availableProducts = (ArrayList<Storage>) args[0];
+        allPossibleProducts = (ArrayList<StorageList>)args[1];
+
         addBehaviour(new WaitForReceive());
     }
 
     private class WaitForReceive extends CyclicBehaviour {
         @Override
         public void action() {
-            System.out.println("Storage: waiting " + nicknamesOfProducts.isEmpty());
+
             var msg = myAgent.receive();
-            if (msg != null) {
-                // TODO: отправить сообщение продукту о его резервации в колличестве msg.getContentObject()
-                // Название продукта будет в msg.getContent() => найти его в nicknameOfProduct
-                Object[] args = {"none", 0};
+            if (msg != null && msg.getSender().getLocalName().equals("Menu")) {
+
+            } else if (msg != null) {
                 try {
-                    args = (Object[]) msg.getContentObject();
+                    var necessaryProducts = (ArrayList<OperProduct>)msg.getContentObject();
+                    for (var product : necessaryProducts) {
+                        for (var available : availableProducts) {
+                            if (product.prod_type == available.prod_item_type) {
+                                if (available.prod_item_quantity - product.prod_quantity <= 0) {
+                                    // TODO: что делать если не хватает продуктов??
+                                } else {
+                                    available.prod_item_quantity -= product.prod_quantity;
+                                }
+                            }
+                        }
+                    }
+
                 } catch (UnreadableException e) {
-                    System.out.println("Storage: " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
-                String content = (String) args[0];
-                Integer amount = (Integer) args[1];
-
-                // TODO: если продукт исчерпан или недоступен и есть еще один такой же продукт нужно взять следующий
-                var sendMsg = new ACLMessage(ACLMessage.INFORM);
-                sendMsg.addReceiver(new AID(content, AID.ISLOCALNAME));
-                try {
-                    sendMsg.setContentObject(amount);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-                System.out.println("Storage: sending message to " + content);
-                myAgent.send(sendMsg);
-
             } else {
                 block();
             }

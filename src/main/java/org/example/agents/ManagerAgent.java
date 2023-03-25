@@ -6,7 +6,10 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.wrapper.StaleProxyException;
 import org.example.models.Visitor.Visitor;
+
+import java.io.IOException;
 
 public class ManagerAgent extends Agent {
 
@@ -19,7 +22,7 @@ public class ManagerAgent extends Agent {
         addBehaviour(new OneShotBehaviour() {
             @Override
             public void action() {
-                myAgent.addBehaviour(new CreateOrder());
+                myAgent.addBehaviour(new ReceiveMessageFromVisitor());
             }
         });
 
@@ -28,7 +31,7 @@ public class ManagerAgent extends Agent {
     }
 
     // По тз
-    private class CreateOrder extends CyclicBehaviour {
+    private class ReceiveMessageFromVisitor extends CyclicBehaviour {
         @Override
         public void action() {
             System.out.println("Manager: trying to receive message");
@@ -38,7 +41,7 @@ public class ManagerAgent extends Agent {
                     var response = (Visitor) message.getContentObject();
                     System.out.println("Manager: Message received from " + response.vis_name);
                     // TODO: отослать агнету Меню о актуализации меню
-                    addBehaviour(new SendOrderToMenuAgent());
+                    addBehaviour(new SendOrderToMenuAgent(response));
                     // TODO: Отсылать нужно с информацией от какого посетителя пришел этот заказ чтобы создать позже заказ
 
                     for (var ord : response.vis_ord_dishes) {
@@ -55,19 +58,20 @@ public class ManagerAgent extends Agent {
     }
     // по схеме
     private class SendOrderToMenuAgent extends Behaviour {
-
-        SendOrderToMenuAgent() {
+        Visitor vis;
+        SendOrderToMenuAgent(Visitor vis) {
+            this.vis = vis;
         }
         @Override
         public void action() {
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.addReceiver(new AID("Menu", AID.ISLOCALNAME));
             msg.setLanguage("English");
-//            try {
-//                msg.setContentObject(response);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
+            try {
+                msg.setContentObject(vis);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             send(msg);
         }
 
@@ -83,7 +87,14 @@ public class ManagerAgent extends Agent {
         public void action() {
             var message = myAgent.receive();
             if (message != null && message.getSender().getLocalName().equals("Menu")) {
-                // TODO: сделать заказ с полученным меню
+                try {
+                    var fixedVisitor = (Visitor)message.getContentObject();
+                    String nick = "order for " + fixedVisitor.vis_name;
+                    mainContainer.createNewAgent(nick, OrderAgent.class.getName(), new Object[]{fixedVisitor}).start();
+
+                } catch (UnreadableException | StaleProxyException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 block();
             }

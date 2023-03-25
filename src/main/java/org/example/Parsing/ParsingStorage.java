@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ParsingStorage {
+    public static  ArrayList<Storage> storage;
     public static ArrayList<Storage> getStorageModelList(String jsonPath) {
         var json = new JSONObject(jsonPath);
 
         JSONArray arr = json.getJSONArray("products");
-        ArrayList<Storage> storage = new ArrayList<>(arr.length());
+        storage = new ArrayList<>(arr.length());
         for (var i = 0; i < arr.length(); i++) {
             storage.add(new Storage(arr.getJSONObject(i).getInt("prod_item_id"),
                     arr.getJSONObject(i).getInt("prod_item_type"),
