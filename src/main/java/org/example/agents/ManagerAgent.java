@@ -22,18 +22,6 @@ public class ManagerAgent extends Agent {
                 myAgent.addBehaviour(new CreateOrder());
             }
         });
-//        addBehaviour(new OneShotBehaviour() {
-//            @Override
-//            public void action() {
-//                myAgent.addBehaviour(new DeleteOrder());
-//            }
-//        });
-//        addBehaviour(new OneShotBehaviour() {
-//            @Override
-//            public void action() {
-//                myAgent.addBehaviour(new SendOrderToMenuAgent());
-//            }
-//        });
 
         System.out.println("Manager " + getName() + " is set");
         System.out.println(getAID());
@@ -45,22 +33,18 @@ public class ManagerAgent extends Agent {
         public void action() {
             System.out.println("Manager: trying to receive message");
             var message = myAgent.receive();
-            if (message != null) {
+            if (message != null && !message.getSender().getLocalName().equals("Menu")) {
                 try {
                     var response = (Visitor) message.getContentObject();
                     System.out.println("Manager: Message received from " + response.vis_name);
+                    // TODO: отослать агнету Меню о актуализации меню
+                    addBehaviour(new SendOrderToMenuAgent());
+                    // TODO: Отсылать нужно с информацией от какого посетителя пришел этот заказ чтобы создать позже заказ
+
                     for (var ord : response.vis_ord_dishes) {
-                        // TODO: отослать агнету Меню о актуализации меню
                         System.out.print(ord.menu_dish_id + ", ");
                     }
                     System.out.println();
-//                    try {
-//                        // TODO: Создать ордер агента с нужными параметрами(передать их) Пока передаю ArrayList<AID>
-//                        countOfOrders++;
-//                        mainContainer.createNewAgent("order " + countOfOrders, OrderAgent.class.getName(), new Object[]{response, countOfOrders, mainContainer}).start();
-//                    } catch (StaleProxyException e) {
-//                        throw new RuntimeException(e);
-//                    }
                 } catch (UnreadableException e) {
                     System.out.println(e.getMessage());
                 }
@@ -71,7 +55,9 @@ public class ManagerAgent extends Agent {
     }
     // по схеме
     private class SendOrderToMenuAgent extends Behaviour {
-        // TODO: как мы узнаем какие именно продукты резервировать? Пока что просто кинул список AID.
+
+        SendOrderToMenuAgent() {
+        }
         @Override
         public void action() {
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
@@ -87,7 +73,20 @@ public class ManagerAgent extends Agent {
 
         @Override
         public boolean done() {
-            return false;
+            return true;
+        }
+    }
+
+    private class ReceiveAnswerFromMenuAgent extends CyclicBehaviour {
+
+        @Override
+        public void action() {
+            var message = myAgent.receive();
+            if (message != null && message.getSender().getLocalName().equals("Menu")) {
+                // TODO: сделать заказ с полученным меню
+            } else {
+                block();
+            }
         }
     }
 
