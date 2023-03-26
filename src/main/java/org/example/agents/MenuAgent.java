@@ -74,7 +74,7 @@ public class MenuAgent extends Agent {
                         message.setContentObject(necessary);
                         send(message);
                     } catch (UnreadableException | IOException e) {
-                        throw new RuntimeException(e);
+                        System.out.println(e.getMessage());
                     }
                 }
             } else {

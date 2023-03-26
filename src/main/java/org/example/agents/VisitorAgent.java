@@ -23,7 +23,7 @@ public class VisitorAgent extends Agent {
     protected void setup() {
         System.out.println("Visitor " + getAID().getName() + " set");
         manager = getAID("Manager");
-
+        // TODO: заполнить нормально заказ посетителя из входных данных
         thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
         var id = rnd.nextInt(0, 6);
