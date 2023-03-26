@@ -21,7 +21,6 @@ public class ProcessAgent extends Agent {
     private VisOrdDishes meal;
     private ArrayList<Process> necessaryForDish;
 
-    private Double timeLeft;
 
     @Override
     protected void setup() {
@@ -66,7 +65,6 @@ public class ProcessAgent extends Agent {
                     System.out.println(getLocalName() + ": received message");
                     necessaryForDish = (ArrayList<Process>) msg.getContentObject();
                     for (var necessary : necessaryForDish) {
-
                         for (var i : ParsingEquipment.equipments) {
                             if (i.equip_type == necessary.oper_equip_id) {
                                 var messageToReserveEq = new ACLMessage(ACLMessage.INFORM);
