@@ -12,11 +12,9 @@ import java.util.logging.SimpleFormatter;
 
 public class ProcessLogger {
     public static final Logger logger = Logger.getLogger(ProcessLogger.class.getName());
-
     public static final com.google.gson.Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             .create();
-
     static {
         try {
             FileHandler fileHandler = new FileHandler("src/main/java/org/example/output/operation_log.txt");

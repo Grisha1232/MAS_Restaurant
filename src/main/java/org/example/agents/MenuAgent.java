@@ -75,7 +75,7 @@ public class MenuAgent extends Agent {
                         }
                         var message = new ACLMessage(ACLMessage.INFORM);
                         message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-                        message.setContentObject(necessary);
+                        message.setContentObject(new Pair<>(necessary,response));
                         send(message);
                     } catch (UnreadableException | IOException e) {
                         System.out.println(e.getMessage());

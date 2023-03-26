@@ -1,0 +1,6 @@
+мар. 26, 2023 10:57:34 PM org.example.agents.ProcessAgent$ReceiveDishCard action
+FINE: {"proc_id":3,"ord_dish":627,"proc_started":"2023-03-26T22:57:34","proc_ended":"2023-03-26T22:57:34","proc_active":false,"proc_operations":[{"oper_proc":2}]}
+мар. 26, 2023 10:57:34 PM org.example.agents.ProcessAgent$ReceiveDishCard action
+FINE: {"proc_id":3,"ord_dish":626,"proc_started":"2023-03-26T22:57:34","proc_ended":"2023-03-26T22:57:34","proc_active":false,"proc_operations":[{"oper_proc":0}]}
+мар. 26, 2023 10:57:34 PM org.example.agents.ProcessAgent$ReceiveDishCard action
+FINE: {"proc_id":3,"ord_dish":625,"proc_started":"2023-03-26T22:57:34","proc_ended":"2023-03-26T22:57:34","proc_active":false,"proc_operations":[{"oper_proc":1}]}

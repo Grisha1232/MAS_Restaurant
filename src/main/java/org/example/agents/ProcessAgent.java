@@ -7,19 +7,27 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.example.Loggers.OperationLogger;
+import org.example.Loggers.ProcessLogger;
+import org.example.Pair;
 import org.example.Parsing.ParsingCooks;
 import org.example.Parsing.ParsingEquipment;
 import org.example.models.Cooks;
+import org.example.models.Operation.OperProc;
+import org.example.models.Operation.Operation;
 import org.example.models.Process;
 import org.example.models.Visitor.VisOrdDishes;
+import org.example.models.Visitor.Visitor;
 
 import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ProcessAgent extends Agent {
     private VisOrdDishes meal;
     private ArrayList<Process> necessaryForDish;
+    private static int id = 0;
 
 
     @Override
@@ -27,6 +35,7 @@ public class ProcessAgent extends Agent {
         meal = (VisOrdDishes) getArguments()[0];
         System.out.println(getLocalName() + ": setup");
         addBehaviour(new AskOperations());
+        ++id;
     }
 
 
@@ -57,14 +66,19 @@ public class ProcessAgent extends Agent {
     }
 
     private class ReceiveDishCard extends Behaviour {
+        private boolean isDone = false;
+
         @Override
         public void action() {
             var msg = receive();
             if (msg != null) {
                 try {
+                    Date start = new Date();
                     System.out.println(getLocalName() + ": received message");
-                    necessaryForDish = (ArrayList<Process>) msg.getContentObject();
+                    necessaryForDish = ((Pair<ArrayList<Process>, VisOrdDishes>) msg.getContentObject()).getFirst();
+                    var visOrDish = ((Pair<ArrayList<Process>, VisOrdDishes>) msg.getContentObject()).getSecond();
                     for (var necessary : necessaryForDish) {
+                        necessary.oper_proc = id;
                         for (var i : ParsingEquipment.equipments) {
                             if (i.equip_type == necessary.oper_equip_id) {
                                 var messageToReserveEq = new ACLMessage(ACLMessage.INFORM);
@@ -95,9 +109,21 @@ public class ProcessAgent extends Agent {
                             }
                         }
                     }
+                    Date end = new Date();
+                    ArrayList<OperProc> operProcs = new ArrayList<>();
+                    for (var i : necessaryForDish) {
+                        operProcs.add(new OperProc(i.oper_id));
+                    }
+                    var operation = new Operation(necessaryForDish.get(0).oper_proc, visOrDish.ord_dish_id, start,
+                            end, false, operProcs);
+                    String json = ProcessLogger.gson.toJson(operation);
+                    System.out.println("Logger writen a file");
+                    ProcessLogger.logger.fine(json);
+                    isDone = true;
                 } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }
+
             } else {
                 block();
             }
@@ -105,7 +131,7 @@ public class ProcessAgent extends Agent {
 
         @Override
         public boolean done() {
-            return necessaryForDish != null;
+            return isDone;
         }
     }
 }
