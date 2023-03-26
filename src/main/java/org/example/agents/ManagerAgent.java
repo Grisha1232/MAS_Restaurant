@@ -27,7 +27,6 @@ public class ManagerAgent extends Agent {
         });
 
         System.out.println("Manager " + getName() + " is set");
-        System.out.println(getAID());
     }
 
     // По тз
@@ -36,7 +35,7 @@ public class ManagerAgent extends Agent {
         public void action() {
             System.out.println("Manager: trying to receive message");
             var message = myAgent.receive();
-            if (message != null && !message.getSender().getLocalName().equals("Menu")) {
+            if (message != null && !message.getSender().getLocalName().equals("Menu") && !message.getSender().getLocalName().equals("ams")) {
                 try {
                     var response = (Visitor) message.getContentObject();
                     System.out.println("Manager: Message received from " + response.vis_name);

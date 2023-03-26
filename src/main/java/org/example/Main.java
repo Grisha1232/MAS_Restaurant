@@ -4,10 +4,9 @@ package org.example;
 import jade.core.*;
 import jade.core.Runtime;
 import jade.wrapper.ControllerException;
-import org.example.Parsing.ParsingVisitor;
-import org.example.agents.ManagerAgent;
-import org.example.agents.StorageAgent;
-import org.example.agents.VisitorAgent;
+import org.example.Parsing.*;
+import org.example.agents.*;
+import org.example.models.StorageList;
 import org.example.models.Visitor.Visitor;
 
 import java.io.File;
@@ -25,18 +24,31 @@ public class Main {
         p.setParameter(Profile.MAIN_PORT, "8080");
         p.setParameter(Profile.GUI, "true");
 
-        ParsingVisitor.getVisitors(new File("").getAbsolutePath() + "/src/main/java/org/example/input/visitor_order.txt");
-        for (var vis : ParsingVisitor.visitors) {
-            System.out.println(vis.vis_name);
-        }
 
         var r = rt.createMainContainer(p);
+
+        ParsingCooks.getCooks(new File("").getAbsolutePath() + "/src/main/java/org/example/input/cookers.txt");
+        for (var cook : ParsingCooks.cooks) {
+            r.createNewAgent(cook.cook_name, CookAgent.class.getName(), new Object[] {cook}).start();
+        }
+
+        ParsingEquipment.getDishesInMenu(new File("").getAbsolutePath() + "/src/main/java/org/example/input/equipment.txt");
+        for (var eq : ParsingEquipment.equipments) {
+            r.createNewAgent(eq.equip_name, EquipmentAgent.class.getName(), new Object[] {eq}).start();
+        }
+
+        ParsingMenu.getDishesInMenu(new File("").getAbsolutePath() + "/src/main/java/org/example/input/menu_dishes.txt");
+        ParsingDishCard.getDishCards(new File("").getAbsolutePath() + "/src/main/java/org/example/input/dish_cards.txt");
+        r.createNewAgent("Menu", MenuAgent.class.getName(), null).start();
+
+        ParsingVisitor.getVisitors(new File("").getAbsolutePath() + "/src/main/java/org/example/input/visitor_order.txt");
+        for (var vis : ParsingVisitor.visitors) {
+            r.createNewAgent(vis.vis_name, VisitorAgent.class.getName(), new Object[]{vis}).start();
+        }
+        ParsingStorage.getStorageModelList(new File("").getAbsolutePath() + "/src/main/java/org/example/input/products.txt");
+        r.createNewAgent("Storage", StorageAgent.class.getName(), new Object[]{ParsingStorage.storage}).start();
+        r.createNewAgent("Manager", ManagerAgent.class.getName(), new Object[] {r}).start();
         // TODO: считывание входных файлов
         // TODO: создание из фходных файлов агентов: Меню, Склад, Поваров, Обродудования, Посетителей
-        r.createNewAgent("Storage", StorageAgent.class.getName(), new Object[]{r}).start();
-        r.createNewAgent("Manager", ManagerAgent.class.getName(), new Object[]{r}).start();
-        r.createNewAgent("Visitor1", VisitorAgent.class.getName(), new Object[] {new Visitor("Visitor1", new Date(), null, 0, new ArrayList<>())}).start();
-        r.createNewAgent("Visitor2", VisitorAgent.class.getName(), new Object[] {new Visitor("Visitor2", new Date(), null, 0, new ArrayList<>())}).start();
-        r.createNewAgent("Visitor3", VisitorAgent.class.getName(), new Object[] {new Visitor("Visitor3", new Date(), null, 0, new ArrayList<>())}).start();
     }
 }

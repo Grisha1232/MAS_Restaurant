@@ -21,6 +21,7 @@ public class MenuAgent extends Agent {
     private static int oper_id = 0;
     @Override
     protected void setup() {
+        System.out.println("Menu has been setup");
         addBehaviour(new ProcessTheReceivedMessages());
     }
 

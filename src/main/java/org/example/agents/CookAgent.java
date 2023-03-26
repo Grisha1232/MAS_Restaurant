@@ -8,15 +8,19 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Loggers.OperationLogger;
+import org.example.models.Cooks;
 import org.example.models.Process;
 
 import java.util.Date;
 
 public class CookAgent extends Agent {
     Process process;
+    Cooks cook;
 
     @Override
     protected void setup() {
+        cook = (Cooks) getArguments()[0];
+        System.out.println(cook.cook_name + ": setup");
         addBehaviour(new ReserveCook());
     }
 

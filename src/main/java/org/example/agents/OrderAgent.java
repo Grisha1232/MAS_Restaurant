@@ -14,12 +14,13 @@ import java.util.ArrayList;
 public class OrderAgent extends Agent {
     private jade.wrapper.AgentContainer mainContainer;
     private Visitor visitor;
-    private ArrayList<String> processIncluded;
+    private ArrayList<String> processIncluded = new ArrayList<>();
 
     @Override
     protected void setup() {
         var args = getArguments();
         visitor = (Visitor) args[0];
+        mainContainer = getContainerController();
 
         addBehaviour(new CreateMeals());
     }
@@ -33,9 +34,9 @@ public class OrderAgent extends Agent {
             // создание процесса готовки.
             for (var i : visitor.vis_ord_dishes) {
                 try {
-                    mainContainer.createNewAgent(visitor.vis_name + " " + i.menu_dish,
+                    mainContainer.createNewAgent(visitor.vis_name + " " + i.ord_dish_id,
                             ProcessAgent.class.getName(), new Object[]{i}).start();
-                    processIncluded.add(visitor.vis_name + " " + i.menu_dish);
+                    processIncluded.add(visitor.vis_name + " " + i.ord_dish_id);
                 } catch (StaleProxyException e) {
                     throw new RuntimeException(e);
                 }
