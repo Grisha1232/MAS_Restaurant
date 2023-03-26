@@ -66,7 +66,7 @@ public class MenuAgent extends Agent {
                                 for (var dish_card : ParsingDishCard.dishCards) {
                                     for (var oper : dish_card.operations) {
                                         var operation = new Process(oper_id++, 0, dish_card.card_id,
-                                                new Date(), null, oper.equip_type, 0,
+                                                null, null, oper.equip_type, 0,
                                                 true, oper.oper_time);
                                         necessary.add(operation);
                                     }

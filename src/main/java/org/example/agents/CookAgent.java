@@ -8,6 +8,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Loggers.OperationLogger;
+import org.example.Parsing.ParsingCooks;
 import org.example.models.Cooks;
 import org.example.models.Process;
 
@@ -31,22 +32,40 @@ public class CookAgent extends Agent {
             var msg = myAgent.receive();
             if (msg != null) {
                 try {
+                    System.out.println(cook.cook_name + ": reserved from " + msg.getSender().getLocalName());
+                    for (var c : ParsingCooks.cooks) {
+                        if (c.cook_id == cook.cook_id) {
+                            c.cook_active = false;
+                        }
+                    }
                     process = (Process)msg.getContentObject();
 
                     process.oper_started = new Date();
+                    process.oper_active = false;
 
-                    myAgent.wait((long) process.oper_time * 60);
+                    System.out.println(cook.cook_name + ": waiting for milliseconds = " + process.oper_time * 100000);
+
+                    myAgent.doWait((int) (process.oper_time * 100000));
+
+                    System.out.println(getLocalName() + ": finished the job");
                     var message = new ACLMessage(ACLMessage.INFORM);
                     message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
                     message.setContent("done");
+                    send(message);
 
                     process.oper_ended = new Date();
 
                     String json = OperationLogger.gson.toJson(process);
+                    System.out.println("Logger writen a file");
                     OperationLogger.logger.fine(json);
+                    for (var c : ParsingCooks.cooks) {
+                        if (c.cook_id == cook.cook_id) {
+                            c.cook_active = true;
+                        }
+                    }
 
                     send(message);
-                } catch (UnreadableException | InterruptedException e) {
+                } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }
             } else {

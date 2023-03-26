@@ -3,6 +3,7 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -26,9 +27,9 @@ public class VisitorAgent extends Agent {
         // TODO: заполнить нормально заказ посетителя из входных данных
         thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
-        addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
+        addBehaviour(new OneShotBehaviour() {
             @Override
-            protected void onTick() {
+            public void action() {
                 addBehaviour(new MakeOrder());
             }
         });

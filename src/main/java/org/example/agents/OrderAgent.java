@@ -21,6 +21,7 @@ public class OrderAgent extends Agent {
         var args = getArguments();
         visitor = (Visitor) args[0];
         mainContainer = getContainerController();
+        System.out.println(getLocalName() + ": setup");
 
         addBehaviour(new CreateMeals());
     }

@@ -12,7 +12,7 @@
                         {
                                     "cook_id": 14,
                                     "cook_name": "Sidorov G. S.",
-                                    "cook_active": false
+                                    "cook_active": true
                         }
             ]
 }

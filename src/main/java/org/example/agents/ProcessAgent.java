@@ -9,9 +9,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Parsing.ParsingCooks;
 import org.example.Parsing.ParsingEquipment;
+import org.example.models.Cooks;
 import org.example.models.Process;
 import org.example.models.Visitor.VisOrdDishes;
 
+import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,6 +26,7 @@ public class ProcessAgent extends Agent {
     @Override
     protected void setup() {
         meal = (VisOrdDishes) getArguments()[0];
+        System.out.println(getLocalName() + ": setup");
         addBehaviour(new AskOperations());
     }
 
@@ -36,6 +39,7 @@ public class ProcessAgent extends Agent {
             try {
                 msg.setContentObject(meal);
                 send(msg);
+                System.out.println(getLocalName() + ": sent message to Menu");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -59,22 +63,35 @@ public class ProcessAgent extends Agent {
             var msg = receive();
             if (msg != null) {
                 try {
+                    System.out.println(getLocalName() + ": received message");
                     necessaryForDish = (ArrayList<Process>) msg.getContentObject();
                     for (var necessary : necessaryForDish) {
-                        for (var i : ParsingCooks.cooks) {
-                            if (i.cook_id == necessary.oper_coocker_id) {
-                                var messageToReserve = new ACLMessage(ACLMessage.INFORM);
-                                messageToReserve.addReceiver(new AID(i.cook_name, AID.ISLOCALNAME));
-                                messageToReserve.setContentObject(necessary.oper_time);
-                                send(messageToReserve);
+                        var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                        Cooks cook = null;
+                        System.out.println(getLocalName() + ": finding the cook");
+                        while (cook == null) {
+                            for (var c : ParsingCooks.cooks) {
+                                System.out.println(getLocalName() + ": " + c.cook_name + " " + c.cook_active);
+                                if (c.cook_active) {
+                                    c.cook_active = false;
+                                    cook = c;
+
+                                    necessary.oper_coocker_id = cook.cook_id;
+                                    System.out.println(getLocalName() + ": trying to reserve cook named = " + cook.cook_name);
+                                    messageToReserve.addReceiver(new AID(cook.cook_name, AID.ISLOCALNAME));
+                                    messageToReserve.setContentObject(necessary);
+                                    send(messageToReserve);
+                                    break;
+                                }
                             }
                         }
+
                         for (var i : ParsingEquipment.equipments) {
                             if (i.equip_id == necessary.oper_equip_id) {
-                                var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                                var messageToReserveEq = new ACLMessage(ACLMessage.INFORM);
                                 messageToReserve.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
-                                messageToReserve.setContentObject(necessary.oper_time);
-                                send(messageToReserve);
+                                messageToReserve.setContentObject(necessary);
+                                send(messageToReserveEq);
                             }
                         }
                     }

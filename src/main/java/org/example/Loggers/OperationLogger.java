@@ -2,6 +2,7 @@ package org.example.Loggers;
 
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,7 @@ public class OperationLogger {
 
     static {
         try {
-            FileHandler fileHandler = new FileHandler("src/main/java/logs/process_logs");
+            FileHandler fileHandler = new FileHandler(new File("").getAbsolutePath() + "/src/main/java/org/example/output/process_log.txt");
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
             logger.setLevel(Level.ALL);
