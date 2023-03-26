@@ -5,6 +5,7 @@ import org.example.models.Visitor.Visitor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,7 @@ public class ParsingVisitor {
     public static ArrayList<Visitor> visitors;
 
     public static ArrayList<Visitor> getVisitors(String jsonPath) throws ParseException {
+        System.out.println(jsonPath);
         var json = new JSONObject(jsonPath);
         JSONArray arr = json.getJSONArray( "visitors_orders");
         visitors = new ArrayList<>(arr.length());

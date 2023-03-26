@@ -78,7 +78,6 @@ public class ProcessAgent extends Agent {
                             }
                         }
                     }
-
                 } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }
