@@ -66,6 +66,17 @@ public class ProcessAgent extends Agent {
                     System.out.println(getLocalName() + ": received message");
                     necessaryForDish = (ArrayList<Process>) msg.getContentObject();
                     for (var necessary : necessaryForDish) {
+
+                        for (var i : ParsingEquipment.equipments) {
+                            if (i.equip_type == necessary.oper_equip_id) {
+                                var messageToReserveEq = new ACLMessage(ACLMessage.INFORM);
+                                messageToReserveEq.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
+                                necessary.oper_equip_id = i.equip_id;
+                                messageToReserveEq.setContentObject(necessary);
+                                send(messageToReserveEq);
+                            }
+                        }
+
                         var messageToReserve = new ACLMessage(ACLMessage.INFORM);
                         Cooks cook = null;
                         System.out.println(getLocalName() + ": finding the cook");
@@ -83,15 +94,6 @@ public class ProcessAgent extends Agent {
                                     send(messageToReserve);
                                     break;
                                 }
-                            }
-                        }
-
-                        for (var i : ParsingEquipment.equipments) {
-                            if (i.equip_id == necessary.oper_equip_id) {
-                                var messageToReserveEq = new ACLMessage(ACLMessage.INFORM);
-                                messageToReserve.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
-                                messageToReserve.setContentObject(necessary);
-                                send(messageToReserveEq);
                             }
                         }
                     }

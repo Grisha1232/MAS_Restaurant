@@ -5,13 +5,16 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.example.Loggers.OperationLogger;
+import org.example.Parsing.ParsingCooks;
+import org.example.Parsing.ParsingEquipment;
 import org.example.models.KitchenEquipment;
 import org.example.models.Process;
 
 import java.util.Date;
 
 public class EquipmentAgent extends Agent {
-    Process proc;
+    Process process;
 
     KitchenEquipment equipment;
     @Override
@@ -28,15 +31,28 @@ public class EquipmentAgent extends Agent {
             var msg = myAgent.receive();
             if (msg != null) {
                 try {
-                    proc = (Process) msg.getContentObject();
-                    proc.oper_started = new Date();
-                    myAgent.wait((long)proc.oper_time * 60);
+                    System.out.println(equipment.equip_name + ": reserved from " + msg.getSender().getLocalName());
+                    for (var c : ParsingEquipment.equipments) {
+                        if (c.equip_id == equipment.equip_id) {
+                            c.equip_active = false;
+                        }
+                    }
+                    process = (Process) msg.getContentObject();
+
+                    System.out.println(getLocalName() + ": finished the job");
                     var message = new ACLMessage(ACLMessage.INFORM);
                     message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
                     message.setContent("done");
-                    proc.oper_ended = new Date();
                     send(message);
-                } catch (UnreadableException | InterruptedException e) {
+
+                    for (var c : ParsingEquipment.equipments) {
+                        if (c.equip_id == equipment.equip_id) {
+                            c.equip_active = true;
+                        }
+                    }
+
+                    send(message);
+                } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }
             } else {
