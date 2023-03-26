@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class ProcessAgent extends Agent {
     private VisOrdDishes meal;
-    private Process necessaryForDish;
+    private ArrayList<Process> necessaryForDish;
 
     @Override
     protected void setup() {
@@ -46,21 +46,24 @@ public class ProcessAgent extends Agent {
             var msg = receive();
             if (msg != null) {
                 try {
-                    necessaryForDish = (Process) msg.getContentObject();
-                    for (var i : ParsingCooks.cooks) {
-                        if (i.cook_id == necessaryForDish.oper_coocker_id) {
-                            var messageToReserve = new ACLMessage(ACLMessage.INFORM);
-                            messageToReserve.addReceiver(new AID(i.cook_name, AID.ISLOCALNAME));
-                            messageToReserve.setContentObject(necessaryForDish.oper_time);
-                            send(messageToReserve);
+                    // TODO: у блюда может быть несколько операций по приготовлению
+                    necessaryForDish = (ArrayList<Process>) msg.getContentObject();
+                    for (var necessary : necessaryForDish) {
+                        for (var i : ParsingCooks.cooks) {
+                            if (i.cook_id == necessary.oper_coocker_id) {
+                                var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                                messageToReserve.addReceiver(new AID(i.cook_name, AID.ISLOCALNAME));
+                                messageToReserve.setContentObject(necessary.oper_time);
+                                send(messageToReserve);
+                            }
                         }
-                    }
-                    for (var i : ParsingEquipment.equipments) {
-                        if (i.equip_id == necessaryForDish.oper_equip_id) {
-                            var messageToReserve = new ACLMessage(ACLMessage.INFORM);
-                            messageToReserve.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
-                            messageToReserve.setContentObject(necessaryForDish.oper_time);
-                            send(messageToReserve);
+                        for (var i : ParsingEquipment.equipments) {
+                            if (i.equip_id == necessary.oper_equip_id) {
+                                var messageToReserve = new ACLMessage(ACLMessage.INFORM);
+                                messageToReserve.addReceiver(new AID(i.equip_name, AID.ISLOCALNAME));
+                                messageToReserve.setContentObject(necessary.oper_time);
+                                send(messageToReserve);
+                            }
                         }
                     }
                 } catch (UnreadableException | IOException e) {

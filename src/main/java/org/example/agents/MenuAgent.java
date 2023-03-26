@@ -6,14 +6,19 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import org.example.Pair;
+import org.example.Parsing.ParsingDishCard;
+import org.example.Parsing.ParsingMenu;
+import org.example.models.Process;
 import org.example.models.Visitor.VisOrdDishes;
 import org.example.models.Visitor.Visitor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MenuAgent extends Agent {
 
+    private static int oper_id = 0;
     @Override
     protected void setup() {
         addBehaviour(new ProcessTheReceivedMessages());
@@ -52,10 +57,23 @@ public class MenuAgent extends Agent {
                         throw new RuntimeException(e);
                     }
                 } else {
+                    ArrayList<Process> necessary = new ArrayList<>();
                     try {
                         var response = (VisOrdDishes) msg.getContentObject();
-                        // TODO: как получить из этого операции?
-                    } catch (UnreadableException e) {
+                        for (var menu : ParsingMenu.dishesInMenu) {
+                            if (menu.menu_dish_id == response.menu_dish) {
+                                for (var dish_card : ParsingDishCard.dishCards) {
+                                    for (var oper : dish_card.operations) {
+                                        necessary.add(new Process(oper_id++, 0, dish_card.card_id, new Date(), null, oper.equip_type, 0, true, oper.oper_time));
+                                    }
+                                }
+                            }
+                        }
+                        var message = new ACLMessage(ACLMessage.INFORM);
+                        message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
+                        message.setContentObject(necessary);
+                        send(message);
+                    } catch (UnreadableException | IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
