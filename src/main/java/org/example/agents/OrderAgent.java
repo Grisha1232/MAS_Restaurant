@@ -66,7 +66,6 @@ public class OrderAgent extends Agent {
                 }
                 step = 1;
             } else if (step == 1) {
-                // TODO: receive message from operationAgent about time left (step = 1)
                 var msg = receive();
                 if (msg != null) {
                     receivedMessages++;
