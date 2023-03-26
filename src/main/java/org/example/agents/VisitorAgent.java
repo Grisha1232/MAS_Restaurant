@@ -96,9 +96,8 @@ public class VisitorAgent extends Agent {
             var msg = myAgent.receive();
             if (msg != null) {
                 try {
-                    var response = (Pair<Boolean, String>)msg.getContentObject();
-                    isReady = response.getFirst();
-                    timeLeft = response.getSecond();
+                    var response = (Double) msg.getContentObject();
+                    System.out.println(myAgent.getLocalName() + ": timeLeft = " + response);
                 } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }

@@ -3,6 +3,7 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 public class ProcessAgent extends Agent {
     private VisOrdDishes meal;
     private ArrayList<Process> necessaryForDish;
+
+    private Double timeLeft;
 
     @Override
     protected void setup() {
@@ -40,13 +43,22 @@ public class ProcessAgent extends Agent {
         }
     }
 
+    private class ReplyOnTimeLeft extends CyclicBehaviour {
+        @Override
+        public void action() {
+            var msg = receive();
+            if (msg != null) {
+
+            }
+        }
+    }
+
     private class ReceiveDishCard extends Behaviour {
         @Override
         public void action() {
             var msg = receive();
             if (msg != null) {
                 try {
-                    // TODO: у блюда может быть несколько операций по приготовлению
                     necessaryForDish = (ArrayList<Process>) msg.getContentObject();
                     for (var necessary : necessaryForDish) {
                         for (var i : ParsingCooks.cooks) {
@@ -66,6 +78,7 @@ public class ProcessAgent extends Agent {
                             }
                         }
                     }
+
                 } catch (UnreadableException | IOException e) {
                     throw new RuntimeException(e);
                 }

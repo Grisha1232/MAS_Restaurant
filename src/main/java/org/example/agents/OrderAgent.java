@@ -4,16 +4,17 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.wrapper.StaleProxyException;
 import org.example.models.Visitor.Visitor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class OrderAgent extends Agent {
-    // Содержит id блюд
-
     private jade.wrapper.AgentContainer mainContainer;
     private Visitor visitor;
+    private ArrayList<String> processIncluded;
 
     @Override
     protected void setup() {
@@ -34,6 +35,7 @@ public class OrderAgent extends Agent {
                 try {
                     mainContainer.createNewAgent(visitor.vis_name + " " + i.menu_dish,
                             ProcessAgent.class.getName(), new Object[]{i}).start();
+                    processIncluded.add(visitor.vis_name + " " + i.menu_dish);
                 } catch (StaleProxyException e) {
                     throw new RuntimeException(e);
                 }
@@ -50,12 +52,48 @@ public class OrderAgent extends Agent {
 
     private class NotifyAboutTime extends Behaviour {
         Integer step = 0;
+        int receivedMessages = 0;
+        Double timeLeft = 0.0;
 
         @Override
         public void action() {
-            // TODO: send message to ask time left from operationAgent (step = 0)
-            // TODO: receive message from operationAgent about time left (step = 1)
-            // TODO: send message about time left to VisitorAgent (step = 2)
+            if (step == 0) {
+                for (var nick : processIncluded) {
+                    var msg = new ACLMessage(ACLMessage.INFORM);
+                    msg.addReceiver(new AID(nick, AID.ISLOCALNAME));
+                    msg.setContent("give me a time left");
+                    send(msg);
+                }
+                step = 1;
+            } else if (step == 1) {
+                // TODO: receive message from operationAgent about time left (step = 1)
+                var msg = receive();
+                if (msg != null) {
+                    receivedMessages++;
+                    try {
+                       var time = (Double) msg.getContentObject();
+                       if (time > timeLeft) {
+                           timeLeft = time;
+                       }
+                    } catch (UnreadableException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (receivedMessages == processIncluded.size()) {
+                        step = 2;
+                    }
+                } else {
+                    block();
+                }
+            } else {
+                var message = new ACLMessage(ACLMessage.INFORM);
+                message.addReceiver(new AID(visitor.vis_name, AID.ISLOCALNAME));
+                try {
+                    message.setContentObject(timeLeft);
+                    send(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         @Override
