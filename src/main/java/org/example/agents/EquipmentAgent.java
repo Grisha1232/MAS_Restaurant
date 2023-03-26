@@ -40,10 +40,6 @@ public class EquipmentAgent extends Agent {
                     process = (Process) msg.getContentObject();
 
                     System.out.println(getLocalName() + ": finished the job");
-                    var message = new ACLMessage(ACLMessage.INFORM);
-                    message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-                    message.setContent("done");
-                    send(message);
 
                     for (var c : ParsingEquipment.equipments) {
                         if (c.equip_id == equipment.equip_id) {
@@ -51,7 +47,6 @@ public class EquipmentAgent extends Agent {
                         }
                     }
 
-                    send(message);
                 } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }

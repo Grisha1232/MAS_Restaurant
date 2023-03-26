@@ -48,10 +48,6 @@ public class CookAgent extends Agent {
                     myAgent.doWait((int) (process.oper_time * 100000));
 
                     System.out.println(getLocalName() + ": finished the job");
-                    var message = new ACLMessage(ACLMessage.INFORM);
-                    message.addReceiver(new AID(msg.getSender().getLocalName(), AID.ISLOCALNAME));
-                    message.setContent("done");
-                    send(message);
 
                     process.oper_ended = new Date();
 
@@ -63,8 +59,6 @@ public class CookAgent extends Agent {
                             c.cook_active = true;
                         }
                     }
-
-                    send(message);
                 } catch (UnreadableException e) {
                     throw new RuntimeException(e);
                 }

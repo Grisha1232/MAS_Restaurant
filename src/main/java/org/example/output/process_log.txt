@@ -1,6 +1,6 @@
-мар. 26, 2023 10:57:49 PM org.example.agents.CookAgent$ReserveCook action
-FINE: {"oper_id":2,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T22:57:34","oper_ended":"2023-03-26T22:57:49","oper_equip_id":14,"oper_coocker_id":16,"oper_active":false,"oper_time":0.15}
-мар. 26, 2023 10:57:49 PM org.example.agents.CookAgent$ReserveCook action
-FINE: {"oper_id":0,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T22:57:34","oper_ended":"2023-03-26T22:57:49","oper_equip_id":14,"oper_coocker_id":15,"oper_active":false,"oper_time":0.15}
-мар. 26, 2023 10:57:49 PM org.example.agents.CookAgent$ReserveCook action
-FINE: {"oper_id":1,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T22:57:34","oper_ended":"2023-03-26T22:57:49","oper_equip_id":14,"oper_coocker_id":14,"oper_active":false,"oper_time":0.15}
+Mar 26, 2023 11:47:50 PM org.example.agents.CookAgent$ReserveCook action
+FINE: {"oper_id":0,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T23:47:35","oper_ended":"2023-03-26T23:47:50","oper_equip_id":14,"oper_coocker_id":16,"oper_active":false,"oper_time":0.15}
+Mar 26, 2023 11:47:50 PM org.example.agents.CookAgent$ReserveCook action
+FINE: {"oper_id":1,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T23:47:35","oper_ended":"2023-03-26T23:47:50","oper_equip_id":14,"oper_coocker_id":15,"oper_active":false,"oper_time":0.15}
+Mar 26, 2023 11:47:50 PM org.example.agents.CookAgent$ReserveCook action
+FINE: {"oper_id":2,"oper_proc":3,"oper_card":518,"oper_started":"2023-03-26T23:47:35","oper_ended":"2023-03-26T23:47:50","oper_equip_id":14,"oper_coocker_id":14,"oper_active":false,"oper_time":0.15}

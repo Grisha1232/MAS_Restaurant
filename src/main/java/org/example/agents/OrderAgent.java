@@ -42,6 +42,7 @@ public class OrderAgent extends Agent {
                     throw new RuntimeException(e);
                 }
             }
+            addBehaviour(new NotifyAboutTime());
 
         }
 
@@ -59,26 +60,28 @@ public class OrderAgent extends Agent {
 
         @Override
         public void action() {
+            System.out.println(getLocalName() + ": timeGetting step = " + step);
             if (step == 0) {
                 for (var nick : processIncluded) {
                     var msg = new ACLMessage(ACLMessage.INFORM);
                     msg.addReceiver(new AID(nick, AID.ISLOCALNAME));
                     msg.setContent("give me a time left");
+                    System.out.println(getLocalName() + ": sending message to agent " + nick);
                     send(msg);
                 }
                 step = 1;
             } else if (step == 1) {
+                System.out.println(getLocalName() + ": received messages = " + receivedMessages + " count = " + processIncluded.size());
                 var msg = receive();
                 if (msg != null) {
                     receivedMessages++;
                     try {
                        var time = (Double) msg.getContentObject();
-                       if (time > timeLeft) {
-                           timeLeft = time;
-                       }
+                       timeLeft += time;
                     } catch (UnreadableException e) {
                         throw new RuntimeException(e);
                     }
+                    System.out.println(getLocalName() + ": timeLeft = " + timeLeft);
                     if (receivedMessages == processIncluded.size()) {
                         step = 2;
                     }
@@ -91,6 +94,7 @@ public class OrderAgent extends Agent {
                 try {
                     message.setContentObject(timeLeft);
                     send(message);
+                    step = 3;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
