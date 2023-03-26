@@ -3,6 +3,7 @@ package org.example.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -26,11 +27,9 @@ public class VisitorAgent extends Agent {
         // TODO: заполнить нормально заказ посетителя из входных данных
         thisVisitor = (Visitor) getArguments()[0];
         var rnd = new Random();
-        var id = rnd.nextInt(0, 6);
-        thisVisitor.vis_ord_dishes.add(new VisOrdDishes(id, id));
-        addBehaviour(new TickerBehaviour(this, rnd.nextLong(6000, 10000)) {
+        addBehaviour(new OneShotBehaviour() {
             @Override
-            protected void onTick() {
+            public void action() {
                 addBehaviour(new MakeOrder());
             }
         });
@@ -94,7 +93,7 @@ public class VisitorAgent extends Agent {
         @Override
         public void action() {
             var msg = myAgent.receive();
-            if (msg != null) {
+            if (msg != null && !msg.getSender().getLocalName().equals("ams")) {
                 try {
                     var response = (Double) msg.getContentObject();
                     System.out.println(myAgent.getLocalName() + ": timeLeft = " + response);

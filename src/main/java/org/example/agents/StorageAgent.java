@@ -23,14 +23,14 @@ public class StorageAgent extends Agent {
 
     private jade.wrapper.AgentContainer mainContainer;
     private ArrayList<Storage> availableProducts;
-    private ArrayList<StorageList> allPossibleProducts;
+//    private ArrayList<StorageList> allPossibleProducts;
 
     @Override
     protected void setup() {
         var args = getArguments();
         availableProducts = (ArrayList<Storage>) args[0];
-        allPossibleProducts = (ArrayList<StorageList>) args[1];
-
+//        allPossibleProducts = (ArrayList<StorageList>) args[1];
+        System.out.println("Storage has been set");
         addBehaviour(new WaitForReceive());
     }
 

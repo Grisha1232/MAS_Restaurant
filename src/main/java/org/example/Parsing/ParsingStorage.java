@@ -3,15 +3,26 @@ package org.example.Parsing;
 import org.example.models.Storage;
 import org.json.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class ParsingStorage {
     public static ArrayList<Storage> storage;
 
     public static ArrayList<Storage> getStorageModelList(String jsonPath) throws ParseException {
-        var json = new JSONObject(jsonPath);
+        String content = null;
+        try {
+            content = Files.lines(Paths.get(jsonPath))
+                    .collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        var json = new JSONObject(content);
 
         JSONArray arr = json.getJSONArray("products");
         storage = new ArrayList<>(arr.length());
