@@ -3,12 +3,14 @@ package org.example.Parsing;
 import org.example.models.Storage;
 import org.json.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class ParsingStorage {
-    public static  ArrayList<Storage> storage;
-    public static ArrayList<Storage> getStorageModelList(String jsonPath) {
+    public static ArrayList<Storage> storage;
+
+    public static ArrayList<Storage> getStorageModelList(String jsonPath) throws ParseException {
         var json = new JSONObject(jsonPath);
 
         JSONArray arr = json.getJSONArray("products");
@@ -21,8 +23,8 @@ public class ParsingStorage {
                     arr.getJSONObject(i).getString("prod_item_unit"),
                     arr.getJSONObject(i).getDouble("prod_item_quantity"),
                     arr.getJSONObject(i).getDouble("prod_item_cost"),
-                    // TODO: распарсить дату.
-                    new Date(), new Date()
+                    ParseData.ParseData(arr.getJSONObject(i).getString("prod_item_delivered")),
+                    ParseData.ParseData(arr.getJSONObject(i).getString("prod_item_valid_until"))
             ));
         }
         return storage;

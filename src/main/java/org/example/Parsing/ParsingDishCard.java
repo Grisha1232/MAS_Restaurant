@@ -1,9 +1,43 @@
 package org.example.Parsing;
 
 import org.example.models.DishCard.DishCard;
+import org.example.models.DishCard.OperProduct;
+import org.example.models.DishCard.Operation;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class ParsingDishCard {
     public static ArrayList<DishCard> dishCards;
+
+    public static ArrayList<DishCard> getDishCards(String jsonPath) {
+        var json = new JSONObject(jsonPath);
+        JSONArray arr = json.getJSONArray("dish_cards");
+        dishCards = new ArrayList<>(arr.length());
+        for (var i = 0; i < arr.length(); i++) {
+            int card_id = arr.getJSONObject(i).getInt("card_id");
+            String dish_name = arr.getJSONObject(i).getString("dish_name");
+            String card_descr = arr.getJSONObject(i).getString("card_descr");
+            double card_time = arr.getJSONObject(i).getDouble("card_time");
+            var operation = new ArrayList<Operation>();
+            var arr1 = arr.getJSONArray(i);
+            for (var j = 0; j < arr1.length(); j++) {
+                int oper_type = arr1.getJSONObject(j).getInt("oper_type");
+                int equip_type = arr1.getJSONObject(j).getInt("equip_type");
+                double oper_time = arr1.getJSONObject(j).getDouble("oper_time");
+                int oper_async_point = arr1.getJSONObject(j).getInt("oper_async_point");
+                var operProducts = new ArrayList<OperProduct>();
+                var arr2 = arr1.getJSONArray(j);
+                for (var x = 0; x < arr2.length(); x++) {
+                    int prod_type = arr2.getJSONObject(x).getInt("prod_type");
+                    double prod_quantity = arr2.getJSONObject(x).getDouble("prod_quantity");
+                    operProducts.add(new OperProduct(prod_type,prod_quantity));
+                }
+                operation.add(new Operation(oper_type,equip_type,oper_time,oper_async_point,operProducts));
+            }
+            dishCards.add(new DishCard(card_id,dish_name,card_descr,card_time,operation));
+        }
+        return dishCards;
+    }
 }

@@ -8,7 +8,7 @@ public class KitchenEquipment implements Serializable {
     public String equip_name;
     public boolean equip_active;
 
-    KitchenEquipment(int equip_id,int type, String name, boolean active) {
+    public KitchenEquipment(int equip_id,int type, String name, boolean active) {
         this.equip_id = equip_id;
         equip_type = type;
         equip_name = name;
